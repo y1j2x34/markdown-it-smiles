@@ -62,7 +62,11 @@ The molecule $smiles{CCO} is ethanol.
     <script>
         const md = window.markdownit().use(window.markdownItSmiles);
         const html = md.render('The molecule $smiles{CCO} is ethanol.');
-        document.getElementById('content').innerHTML = html;
+        
+        const iframe = document.createElement('iframe');
+        const blob = new Blob([html], { type: 'text/html' })
+        iframe.src = URL.createObjectURL(blob);
+        document.getElementById('content').append(iframe);
     </script>
 </body>
 </html>
