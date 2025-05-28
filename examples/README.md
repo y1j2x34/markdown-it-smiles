@@ -45,7 +45,7 @@ python3 -m http.server 8000
 
 ## 🔧 Customization
 
-Both demo pages use the built distribution file (`../dist/markdown-it-smiles.min.js`). You can modify the examples by editing the JavaScript sections in the HTML files.
+Both demo pages use the built distribution file (`./dist/markdown-it-smiles.min.js`). You can modify the examples by editing the JavaScript sections in the HTML files.
 
 ## 📖 Documentation
 
