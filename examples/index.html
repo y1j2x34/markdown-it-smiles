@@ -128,7 +128,6 @@
         }
         .panel-content iframe {
             width: 100%;
-            height: 100%;
             border: none;
         }
     </style>
@@ -335,7 +334,7 @@ Benzene is the simplest aromatic compound.`
                 element.appendChild(iframe);
                 iframe.onload = () => {
                     const height = iframe.contentDocument.body.scrollHeight;
-                    element.style.height = `${height}px`;
+                    iframe.style.height = `${height}px`;
                 }
             }
         });

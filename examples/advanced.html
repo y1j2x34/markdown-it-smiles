@@ -81,6 +81,10 @@
             margin: 15px 0;
             background: white;
         }
+        iframe {
+            width: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -204,12 +208,23 @@ The aspirin molecule shows the characteristic acetyl group...
             taxol: '```smiles {"width": 280, "height": 200}\nCC1=C2[C@@]([C@]([C@H]([C@@H]3[C@]4([C@H](OC4)C[C@@H]([C@]3(C(=O)[C@@H]2OC(=O)C)C)O)OC(=O)C)OC(=O)c5ccccc5)(C[C@@H]1OC(=O)[C@H](O)[C@@H](NC(=O)c6ccccc6)c7ccccc7)O)(C)C\n```',
             chlorophyll: '```smiles {"width": 280, "height": 200}\nCCC1=C(C2=NC1=CC3=C(C(=C([N-]3)C=C4C(=C(C(=N4)C=C5C(=C(C(=N5)C=C2C(=C)C)C)CCC(=O)OC)C)CCC(=O)OC/C=C(\\C)/CCC[C@H](C)CCC[C@H](C)CCCC(C)C)C)C.[Mg+2]\n```'
         };
-
+        function renderMarkdown(markdown) {
+            const html = md.render(markdown);
+            const blob = new Blob([html], {type: 'text/html'});
+            const iframe = document.createElement('iframe');
+            iframe.src = URL.createObjectURL(blob);
+            iframe.onload = () => {
+                const height = iframe.contentDocument.body.scrollHeight;
+                iframe.style.height = `${height}px`;
+            }
+            return iframe;
+        }
         // Render all compounds
         Object.keys(compounds).forEach(id => {
             const element = document.getElementById(id);
             if (element) {
-                element.innerHTML = md.render(compounds[id]);
+                const iframe = renderMarkdown(compounds[id]);
+                element.appendChild(iframe);
             }
         });
 
@@ -232,7 +247,9 @@ CC(=O)OC1=CC=CC=C1C(=O)O
 
 The aspirin molecule shows the characteristic acetyl group that is responsible for its anti-inflammatory effects.`;
 
-        document.getElementById('research-paper').innerHTML = md.render(researchPaper);
+        const iframe = renderMarkdown(researchPaper);
+
+        document.getElementById('research-paper').appendChild(iframe);
     </script>
 </body>
 </html> 
