@@ -1,0 +1,55 @@
+{
+  "name": "markdown-it-smiles",
+  "version": "1.0.0",
+  "description": "A markdown-it plugin for rendering SMILES (Simplified Molecular Input Line Entry System) chemical structures",
+  "main": "dist/markdown-it-smiles.js",
+  "module": "src/index.mjs",
+  "browser": "dist/markdown-it-smiles.min.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs",
+      "require": "./dist/markdown-it-smiles.js",
+      "browser": "./dist/markdown-it-smiles.min.js"
+    }
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "node test/test.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "markdown-it",
+    "plugin",
+    "smiles",
+    "chemistry",
+    "molecular",
+    "structure",
+    "chemical"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "smiles-drawer": "^1.0.10"
+  },
+  "peerDependencies": {
+    "markdown-it": "^14.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.3.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "markdown-it": "^14.1.0",
+    "rollup": "^4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/y1j2x34/markdown-it-smiles.git"
+  },
+  "bugs": {
+    "url": "https://github.com/y1j2x34/markdown-it-smiles/issues"
+  },
+  "homepage": "https://github.com/y1j2x34/markdown-it-smiles#readme"
+}

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>markdown-it-smiles Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .demo-section h2 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .input-output {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .input-panel, .output-panel {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .panel-header {
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .panel-content {
+            padding: 15px;
+        }
+        
+        .markdown-input {
+            background: #f8f8f8;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            margin: 0;
+        }
+        
+        .github-links {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .github-links a {
+            display: inline-block;
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background 0.3s;
+        }
+        
+        .github-links a:hover {
+            background: #555;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        @media (max-width: 768px) {
+            .input-output {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>markdown-it-smiles</h1>
+        <p>A markdown-it plugin for rendering SMILES chemical structures</p>
+    </div>
+
+    <div class="github-links">
+        <a href="https://github.com/y1j2x34/markdown-it-smiles" target="_blank" rel="noopener">📦 GitHub Repository</a>
+        <a href="https://www.npmjs.com/package/markdown-it-smiles" target="_blank" rel="noopener">📋 NPM Package</a>
+        <a href="advanced.html">🧬 Advanced Examples</a>
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <h3>🧪 Block SMILES</h3>
+            <p>Render chemical structures in dedicated blocks with customizable options</p>
+        </div>
+        <div class="feature">
+            <h3>⚛️ Inline SMILES</h3>
+            <p>Embed molecular structures directly within text paragraphs</p>
+        </div>
+        <div class="feature">
+            <h3>🎨 Customizable</h3>
+            <p>Control size, styling, and rendering options for each structure</p>
+        </div>
+        <div class="feature">
+            <h3>📱 Responsive</h3>
+            <p>Automatically adapts to different screen sizes and devices</p>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🧪 Block SMILES Examples</h2>
+        
+        <h3>Basic Usage</h3>
+        <div class="input-output">
+            <div class="input-panel">
+                <div class="panel-header">Markdown Input</div>
+                <div class="panel-content">
+                    <pre class="markdown-input">```smiles
+CCO
+```</pre>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="panel-header">Rendered Output</div>
+                <div class="panel-content" id="demo1"></div>
+            </div>
+        </div>
+
+        <h3>With Custom Options</h3>
+        <div class="input-output">
+            <div class="input-panel">
+                <div class="panel-header">Markdown Input</div>
+                <div class="panel-content">
+                    <pre class="markdown-input">```smiles {"width": 500, "height": 400, "bondThickness": 1.0}
+C1CCCCC1
+```</pre>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="panel-header">Rendered Output</div>
+                <div class="panel-content" id="demo2"></div>
+            </div>
+        </div>
+
+        <h3>Complex Molecule</h3>
+        <div class="input-output">
+            <div class="input-panel">
+                <div class="panel-header">Markdown Input</div>
+                <div class="panel-content">
+                    <pre class="markdown-input">```smiles
+CC(C)(C)c1ccc(O)cc1
+```</pre>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="panel-header">Rendered Output</div>
+                <div class="panel-content" id="demo3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚛️ Inline SMILES Examples</h2>
+        
+        <div class="input-output">
+            <div class="input-panel">
+                <div class="panel-header">Markdown Input</div>
+                <div class="panel-content">
+                    <pre class="markdown-input">The molecule $smiles{CCO} is ethanol, while $smiles{C1CCCCC1} is cyclohexane.</pre>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="panel-header">Rendered Output</div>
+                <div class="panel-content" id="demo4"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>📝 Mixed Content Example</h2>
+        
+        <div class="input-output">
+            <div class="input-panel">
+                <div class="panel-header">Markdown Input</div>
+                <div class="panel-content">
+                    <pre class="markdown-input"># Organic Chemistry Examples
+
+## Alcohols
+The simplest alcohol is $smiles{CO} (methanol).
+
+## Aromatic Compounds
+```smiles {"width": 300, "height": 250}
+c1ccccc1
+```
+
+Benzene is the simplest aromatic compound.</pre>
+                </div>
+            </div>
+            <div class="output-panel">
+                <div class="panel-header">Rendered Output</div>
+                <div class="panel-content" id="demo5"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🚀 Installation & Usage</h2>
+        
+        <h3>Installation</h3>
+        <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto;"><code>npm install markdown-it-smiles</code></pre>
+        
+        <h3>Basic Usage</h3>
+        <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto;"><code>import MarkdownIt from 'markdown-it';
+import markdownItSmiles from 'markdown-it-smiles';
+
+const md = new MarkdownIt().use(markdownItSmiles);
+
+const result = md.render(`
+# Chemical Structure
+\`\`\`smiles
+CCO
+\`\`\`
+`);</code></pre>
+    </div>
+
+    <!-- Load markdown-it and the plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14/dist/markdown-it.min.js"></script>
+    <script src="../dist/markdown-it-smiles.min.js"></script>
+
+    <script>
+        // Initialize markdown-it with the SMILES plugin
+        const md = window.markdownit().use(window.markdownItSmiles);
+
+        // Demo content
+        const demos = [
+            {
+                id: 'demo1',
+                content: '```smiles\nCCO\n```'
+            },
+            {
+                id: 'demo2', 
+                content: '```smiles {"width": 500, "height": 400, "bondThickness": 1.0}\nC1CCCCC1\n```'
+            },
+            {
+                id: 'demo3',
+                content: '```smiles\nCC(C)(C)c1ccc(O)cc1\n```'
+            },
+            {
+                id: 'demo4',
+                content: 'The molecule $smiles{CCO} is ethanol, while $smiles{C1CCCCC1} is cyclohexane.'
+            },
+            {
+                id: 'demo5',
+                content: `# Organic Chemistry Examples
+
+## Alcohols
+The simplest alcohol is $smiles{CO} (methanol).
+
+## Aromatic Compounds
+\`\`\`smiles {"width": 300, "height": 250}
+c1ccccc1
+\`\`\`
+
+Benzene is the simplest aromatic compound.`
+            }
+        ];
+
+        // Render all demos
+        demos.forEach(demo => {
+            const element = document.getElementById(demo.id);
+            if (element) {
+                element.innerHTML = md.render(demo.content);
+            }
+        });
+    </script>
+</body>
+</html> 
