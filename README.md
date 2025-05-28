@@ -4,7 +4,7 @@ A [markdown-it](https://github.com/markdown-it/markdown-it) plugin for rendering
 
 ## 🌐 Live Demo
 
-**[View Interactive Demo →](https://y1j2x34.github.io/markdown-it-smiles/examples/)**
+**[View Interactive Demo →](https://y1j2x34.github.io/markdown-it-smiles/)**
 
 Try the plugin live with interactive examples showcasing all features!
 

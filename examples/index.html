@@ -126,6 +126,11 @@
                 font-size: 2em;
             }
         }
+        .panel-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -137,6 +142,8 @@
     <div class="github-links">
         <a href="https://github.com/y1j2x34/markdown-it-smiles" target="_blank" rel="noopener">📦 GitHub Repository</a>
         <a href="https://www.npmjs.com/package/markdown-it-smiles" target="_blank" rel="noopener">📋 NPM Package</a>
+        <a href="interactive-demo.html">🎮 Interactive Demo</a>
+        <a href="basic-usage.html">📚 Basic Usage</a>
         <a href="advanced.html">🧬 Advanced Examples</a>
     </div>
 
@@ -321,7 +328,15 @@ Benzene is the simplest aromatic compound.`
         demos.forEach(demo => {
             const element = document.getElementById(demo.id);
             if (element) {
-                element.innerHTML = md.render(demo.content);
+                const html = md.render(demo.content);
+                const blob = new Blob([html], {type: 'text/html'});
+                const iframe = document.createElement('iframe');
+                iframe.src = URL.createObjectURL(blob);
+                element.appendChild(iframe);
+                iframe.onload = () => {
+                    const height = iframe.contentDocument.body.scrollHeight;
+                    element.style.height = `${height}px`;
+                }
             }
         });
     </script>
