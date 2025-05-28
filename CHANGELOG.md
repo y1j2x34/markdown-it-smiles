@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 
 - markdown-it >= 8.0.0
-- smiles-drawer ^1.0.10
+- smiles-drawer ^2.1.7
 
 ### Browser Support
 
@@ -48,10 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- SVG rendering support
+- SVG/PNG rendering support
 - Dark theme support
 - Additional atom visualization modes
-- Performance optimizations
 - TypeScript definitions
-- More comprehensive error messages
-- Plugin configuration validation

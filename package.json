@@ -26,6 +26,11 @@
     "structure",
     "chemical"
   ],
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md"
+  ],
   "author": "ChienHsinYang <y1j2x34@gmail.com>",
   "license": "MIT",
   "engines": {
