@@ -33,7 +33,7 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "smiles-drawer": "^1.0.10"
+    "smiles-drawer": "^2.1.7"
   },
   "peerDependencies": {
     "markdown-it": "^14.0.0"
