@@ -7,6 +7,9 @@ export default defineConfig(options => {
         splitting: false,
         sourcemap: true,
         clean: true,
+        dts: true,
         drop_coonsole: !options.watch,
+        format: ['cjs', 'esm', 'iife'],
+        legacyOutput: true,
     };
 });
