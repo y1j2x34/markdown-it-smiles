@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "rootDir": "./",
+        "baseUrl": ".",
+        "target": "ESNext",
+        "module": "ESNext",
+        "lib": ["ESNext", "DOM"],
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "moduleResolution": "Bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "strict": true,
+        "noImplicitAny": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedIndexedAccess": true,
+        "paths": {
+            "~/*": ["./src/*"]
+        }
+    },
+    "include": ["src", "tests", "dev", "jest.config.ts", "jest.setup.ts", "tsup.config.ts"]
+}
