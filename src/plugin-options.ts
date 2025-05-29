@@ -15,6 +15,13 @@ export interface SmileDrawerTheme {
     H: string;
     BACKGROUND: string;
 }
+export interface SmilerDrawerBlockOptions {
+    theme?: string;
+    reactantWeights?: string;
+    productWeights?: string;
+    reactionOptions?: string;
+    options?: SmileDrawerOptions;
+}
 
 export interface SmileDrawerOptions {
     /** Drawing width */
@@ -53,11 +60,7 @@ export interface SmileDrawerOptions {
     isometric?: boolean;
     /** Debug (draw debug information to canvas) */
     debug?: boolean;
-    /** Color themes */
-    themes?: {
-        dark?: SmileDrawerTheme;
-        light?: SmileDrawerTheme;
-    };
+    themes?: Record<string, SmileDrawerTheme>;
 }
 
 export interface PluginOptions {
@@ -65,8 +68,17 @@ export interface PluginOptions {
     format?: 'svg' | 'png' | 'canvas';
     smileDrawerScript?: string;
 
-    defaultSmileDrawerOptions?: SmileDrawerOptions;
+    smileDrawerOptions?: {
+        default?: Partial<SmileDrawerOptions>;
+        inline?: Partial<SmileDrawerOptions>;
+        block?: Partial<SmileDrawerOptions>;
+    };
+    errorHandling?: {
+        onError?: (e: Error) => void;
+        fallbackImage?: string;
+    };
+}
 
-    defaultInlineOptions?: SmileDrawerOptions;
-    defaultBlockOptions?: SmileDrawerOptions;
+export interface PluginContext {
+    hasSmiles: boolean;
 }
