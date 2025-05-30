@@ -12,10 +12,11 @@ const html = md.render(`
 # Hello World
 
 This is a test of the markdown-it library.
-\`\`\`smiles
+\`\`\`smiles { width: 100, height: 100}
 C1=CC=CC=C1
 \`\`\`
 
 $smiles{C1=CC=CC=C1}
 `);
-console.log(html);
+console.log(html)
+require('fs').writeFileSync('debug.html', html);

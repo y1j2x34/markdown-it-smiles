@@ -22,29 +22,39 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
 
         const format = options.format || 'svg';
         context.hasSmiles = true;
+        console.log('render', data);
+
+        const ATTRS_MAP: Record<string, keyof SmilerDrawerBlockOptions> = {
+            'data-smiles-reactant-weights': 'reactantWeights',
+            'data-smiles-product-weights': 'productWeights',
+            'data-smiles-reaction-options': 'reactionOptions',
+        };
+        const attrs = Object.entries(ATTRS_MAP)
+            .map(([key, value]) => {
+                if (!blockOptions[value]) {
+                    return;
+                }
+                return `${key}="${blockOptions[value]}"`;
+            })
+            .filter(Boolean)
+            .join(' ');
 
         switch (format) {
             case 'svg': {
                 return `<svg 
-                    data-smiles="${escape(data)}" 
-                    data-smiles-reactant-weights="${blockOptions.reactantWeights}" 
-                    data-smiles-product-weights="${blockOptions.productWeights}"
-                    data-smiles-reaction-options="${blockOptions.reactionOptions}"
+                    data-smiles="${data}" 
+                    ${attrs}
                     data-smiles-options="${JSON.stringify(smilesOptions)}"></img>`;
             }
             case 'png': {
                 return `<img 
-                    data-smiles="${escape(data)}" 
-                    data-smiles-reactant-weights="${blockOptions.reactantWeights}" 
-                    data-smiles-product-weights="${blockOptions.productWeights}"
-                    data-smiles-reaction-options="${blockOptions.reactionOptions}"
+                    data-smiles="${data}" 
+                    ${attrs}
                     data-smiles-options="${JSON.stringify(smilesOptions)}"></img>`;
             }
             case 'canvas':
                 return ``;
         }
-        context.hasSmiles = false;
-        return '';
     };
 }
 export function generateBlockRenderer(options: PluginOptions, context: PluginContext) {

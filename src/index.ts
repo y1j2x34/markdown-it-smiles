@@ -17,21 +17,21 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions) {
     md.renderer.rules.smiles_block = generateBlockRenderer(options, context);
     md.renderer.rules.smiles_inline = generateInlineRenderer(options, context);
 
-    md.core.ruler.after('normalize', 'add_script', state => {
+    const oritinalRender = md.render;
+    md.render = (src, env) => {
+        const html = oritinalRender.call(md, src, env);
         if (!context.hasSmiles) {
-            return false;
+            return html;
         }
-        const token = new state.Token('html_block', '', 0);
-        const scriptURL = options.smileDrawerScript ?? 'https://unpkg.com/smile-drawer/dist/index.min.js';
-        token.content = `
+        const scriptURL = options.smileDrawerScript ?? 'https://unpkg.com/smiles-drawer/dist/smiles-drawer.min.js';
+        const scripts = `
             <script src="${scriptURL}"></script>
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     SmiDrawer.apply();
                 })
             </script>
-        `;
-        state.tokens.push(token);
-        return true;
-    });
+        `.replace(/ {4}/g, '');
+        return html + scripts;
+    };
 }

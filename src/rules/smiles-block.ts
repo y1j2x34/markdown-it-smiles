@@ -1,3 +1,4 @@
+import JSON5 from 'json5';
 import { StateBlock } from 'markdown-it/index.js';
 
 // Block-level SMILES rule for markdown-it
@@ -23,7 +24,7 @@ export function smilesBlock(state: StateBlock, start: number, end: number, silen
     let options = {};
     if (optionsMatch && optionsMatch[1]) {
         try {
-            options = JSON.parse(optionsMatch[1]);
+            options = JSON5.parse(optionsMatch[1]);
         } catch (e) {
             // Ignore parsing errors, use default options
         }
