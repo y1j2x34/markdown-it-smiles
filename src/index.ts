@@ -1,7 +1,7 @@
 import { default as MarkdownIt } from 'markdown-it';
 import { PluginContext, PluginOptions } from './plugin-options';
 import { smilesBlock } from './rules/smiles-block';
-import { generateBlockRenderer, generateInlineRenderer } from './renderer/render-block';
+import { generateBlockRenderer, generateInlineRenderer } from './renderer/renderer';
 import { smilesInline } from './rules/smiles-inline';
 
 export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions) {
@@ -31,6 +31,20 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions) {
                     SmiDrawer.apply();
                 })
             </script>
+            <style>
+                .smiles-block {
+                    display: inline-block;
+                }
+                .smiles-block > svg, .smiles-block > img {
+                    width: 100%;
+                    height: 100%;
+                }
+                .smiles-inline {
+                    display: inline-block;
+                    width: 1em;
+                    height: 1em;
+                }
+            </style>
         `.replace(/ {4}/g, '');
         return html + scripts;
     };

@@ -15,13 +15,6 @@ export interface SmileDrawerTheme {
     H: string;
     BACKGROUND: string;
 }
-export interface SmilerDrawerBlockOptions {
-    theme?: string;
-    reactantWeights?: string;
-    productWeights?: string;
-    reactionOptions?: string;
-    options?: SmileDrawerOptions;
-}
 
 export interface SmileDrawerOptions {
     /** Drawing width */
@@ -61,11 +54,17 @@ export interface SmileDrawerOptions {
     /** Debug (draw debug information to canvas) */
     debug?: boolean;
     themes?: Record<string, SmileDrawerTheme>;
+    theme?: string;
+    reactantWeights?: string | number[][];
+    productWeights?: string | number[][];
+    reactionOptions?: string;
+    weights?: string | number[];
+    reagentWeights?: string | number[][];
 }
 
 export interface PluginOptions {
     fontUrl?: string;
-    format?: 'svg' | 'png' | 'canvas';
+    format?: 'svg' | 'img' | 'canvas';
     smileDrawerScript?: string;
 
     smileDrawerOptions?: {

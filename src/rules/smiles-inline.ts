@@ -6,6 +6,7 @@ import { SmileDrawerOptions } from '~/plugin-options';
 export function smilesInline(state: StateInline, silent: boolean) {
     const start = state.pos;
     const max = state.posMax;
+    debugger;
 
     // Check if it starts with $smiles{
     if (start + 8 > max) return false;
@@ -32,18 +33,18 @@ export function smilesInline(state: StateInline, silent: boolean) {
     let paramsEnd = smilesEnd;
     if (state.src[smilesEnd] === '{') {
         pos = smilesEnd + 1;
-        const stack = [];
-        while (pos < max) {
+        let level = 1;
+        while (pos < max && level > 0) {
             if (state.src[pos] === '{') {
-                stack.push('{');
+                level++;
             } else if (state.src[pos] === '}') {
-                stack.pop();
+                level--;
             }
             pos++;
         }
-        if (stack.length === 0) {
+        if (level === 0) {
             paramsEnd = pos;
-            const paramsStr = state.src.slice(smilesEnd + 1, pos - 1).trim();
+            const paramsStr = state.src.slice(smilesEnd, pos).trim();
             if (paramsStr) {
                 try {
                     params = JSON5.parse(paramsStr);

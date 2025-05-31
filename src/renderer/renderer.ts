@@ -1,0 +1,138 @@
+import { Options } from 'markdown-it';
+import JSON5 from 'json5';
+import type { Renderer, Token } from 'markdown-it/index.js';
+import { PluginContext, PluginOptions, SmileDrawerOptions } from '../plugin-options';
+import { extend } from '~/utils/extends';
+
+function generateRenderer(options: PluginOptions, context: PluginContext) {
+    return function render(tokens: Token[], idx: number, smilesOptions: Partial<SmileDrawerOptions>): string {
+        const token = tokens[idx];
+        if (!token) {
+            return '';
+        }
+        const data = token.content;
+
+        const format = options.format || 'svg';
+        context.hasSmiles = true;
+        console.log('render', data);
+
+        const ATTRS_MAP: Record<string, keyof SmileDrawerOptions> = {
+            'data-smiles-reactant-weights': 'reactantWeights',
+            'data-smiles-reagent-weights': 'reagentWeights',
+            'data-smiles-product-weights': 'productWeights',
+            'data-smiles-reaction-options': 'reactionOptions',
+            'data-smiles-theme': 'theme',
+            'data-smiles-weights': 'weights',
+        };
+        const attrs = Object.entries(ATTRS_MAP)
+            .map(([key, smilesDrawerOptionsKey]) => {
+                if (!smilesOptions[smilesDrawerOptionsKey]) {
+                    return;
+                }
+                const value = smilesOptions[smilesDrawerOptionsKey];
+                if (Array.isArray(value)) {
+                    if (Array.isArray(value[0])) {
+                        const str = value
+                            .map(item => {
+                                if (Array.isArray(item)) {
+                                    return item.join(',');
+                                }
+                                return item;
+                            })
+                            .join(';');
+                        return `${key}="${str}"`;
+                    }
+                    return `${key}="${value.join(',')}"`;
+                }
+                return `${key}="${value}"`;
+            })
+            .filter(Boolean)
+            .join(' ');
+
+        return `<${format} 
+            data-smiles="${data}" 
+            ${attrs}
+            data-smiles-options='${JSON.stringify(smilesOptions)}'></${format}>`;
+        // switch (format) {
+        //     case 'svg': {
+        //         return `<svg
+        //             data-smiles="${data}"
+        //             ${attrs}
+        //             data-smiles-options='${JSON.stringify(smilesOptions)}'></img>`;
+        //     }
+        //     case 'png': {
+        //         return `<img
+        //             data-smiles="${data}"
+        //             ${attrs}
+        //             data-smiles-options='${JSON.stringify(smilesOptions)}'></img>`;
+        //     }
+        //     case 'canvas':
+        //         return ``;
+        // }
+    };
+}
+export function generateBlockRenderer(options: PluginOptions, context: PluginContext) {
+    const render = generateRenderer(options, context);
+    return (tokens: Token[], idx: number, rendererOptions: Options, env: any, self: Renderer): string => {
+        const token = tokens[idx];
+        if (!token) {
+            return '';
+        }
+        const blockOptions: SmileDrawerOptions = token.info ? JSON.parse(token.info) : {};
+        const smilesOptions: Partial<SmileDrawerOptions> = extend(
+            {},
+            options.smileDrawerOptions?.default,
+            options.smileDrawerOptions?.block,
+            blockOptions
+        );
+        const html = render(tokens, idx, smilesOptions);
+        const attrs: Record<string, string> = {};
+        const { width, height } = smilesOptions;
+
+        if (typeof width === 'number') {
+            attrs.width = `${width}px`;
+        }
+        if (typeof height === 'number') {
+            attrs.height = `${height}px`;
+        }
+
+        const style = Object.entries(attrs)
+            .map(([key, value]) => `${key}:${value}`)
+            .join(';');
+
+        return `<div class="smiles-block" style="${style}">${html}</div>`;
+    };
+}
+
+export function generateInlineRenderer(options: PluginOptions, context: PluginContext) {
+    const render = generateRenderer(options, context);
+    return (tokens: Token[], idx: number, rendererOptions: Options, env: any, self: Renderer): string => {
+        const token = tokens[idx];
+        if (!token) {
+            return '';
+        }
+        const blockOptions: SmileDrawerOptions = token.info ? JSON.parse(token.info) : {};
+        const smilesOptions: Partial<SmileDrawerOptions> = extend(
+            {},
+            options.smileDrawerOptions?.default,
+            options.smileDrawerOptions?.block,
+            blockOptions
+        );
+        const html = render(tokens, idx, smilesOptions);
+        const attrs: Record<string, string> = {};
+        const { width, height } = smilesOptions;
+
+        if (typeof width === 'number') {
+            attrs.width = `${width}px`;
+        }
+        if (typeof height === 'number') {
+            attrs.height = `${height}px`;
+        }
+
+        const style = Object.entries(attrs)
+            .map(([key, value]) => `${key}:${value}`)
+            .join(';');
+
+        return `<div class="smiles-inline" style="${style}">${html}</div>`;
+    };
+}
