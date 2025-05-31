@@ -23,9 +23,15 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions) {
         if (!context.hasSmiles) {
             return html;
         }
-        const scriptURL = options.smileDrawerScript ?? 'https://unpkg.com/smiles-drawer/dist/smiles-drawer.min.js';
+        const scriptPath = require.resolve('smiles-drawer/dist/smiles-drawer.min.js');
+        const scriptContent = () => {
+            const fs = require('fs');
+            const content = fs.readFileSync(scriptPath, 'utf-8');
+            return content;
+        };
+        const scriptURL = options.smileDrawerScript;
         const scripts = `
-            <script src="${scriptURL}"></script>
+            ${scriptURL ? `<script src="${scriptURL}"></script>` : `<script>${scriptContent()}</script>`}
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     SmiDrawer.apply();

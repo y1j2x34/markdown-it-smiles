@@ -71,7 +71,13 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         // }
     };
 }
-export function generateBlockRenderer(options: PluginOptions, context: PluginContext) {
+
+function createRendererWrapper(
+    options: PluginOptions,
+    context: PluginContext,
+    className: string,
+    optionType: 'block' | 'inline' = 'block'
+) {
     const render = generateRenderer(options, context);
     return (tokens: Token[], idx: number, rendererOptions: Options, env: any, self: Renderer): string => {
         const token = tokens[idx];
@@ -82,7 +88,7 @@ export function generateBlockRenderer(options: PluginOptions, context: PluginCon
         const smilesOptions: Partial<SmileDrawerOptions> = extend(
             {},
             options.smileDrawerOptions?.default,
-            options.smileDrawerOptions?.block,
+            options.smileDrawerOptions?.[optionType],
             blockOptions
         );
         const html = render(tokens, idx, smilesOptions);
@@ -100,39 +106,14 @@ export function generateBlockRenderer(options: PluginOptions, context: PluginCon
             .map(([key, value]) => `${key}:${value}`)
             .join(';');
 
-        return `<div class="smiles-block" style="${style}">${html}</div>`;
+        return `<div class="${className}" style="${style}">${html}</div>`;
     };
 }
 
+export function generateBlockRenderer(options: PluginOptions, context: PluginContext) {
+    return createRendererWrapper(options, context, 'smiles-block', 'block');
+}
+
 export function generateInlineRenderer(options: PluginOptions, context: PluginContext) {
-    const render = generateRenderer(options, context);
-    return (tokens: Token[], idx: number, rendererOptions: Options, env: any, self: Renderer): string => {
-        const token = tokens[idx];
-        if (!token) {
-            return '';
-        }
-        const blockOptions: SmileDrawerOptions = token.info ? JSON.parse(token.info) : {};
-        const smilesOptions: Partial<SmileDrawerOptions> = extend(
-            {},
-            options.smileDrawerOptions?.default,
-            options.smileDrawerOptions?.block,
-            blockOptions
-        );
-        const html = render(tokens, idx, smilesOptions);
-        const attrs: Record<string, string> = {};
-        const { width, height } = smilesOptions;
-
-        if (typeof width === 'number') {
-            attrs.width = `${width}px`;
-        }
-        if (typeof height === 'number') {
-            attrs.height = `${height}px`;
-        }
-
-        const style = Object.entries(attrs)
-            .map(([key, value]) => `${key}:${value}`)
-            .join(';');
-
-        return `<div class="smiles-inline" style="${style}">${html}</div>`;
-    };
+    return createRendererWrapper(options, context, 'smiles-inline', 'inline');
 }

@@ -33,7 +33,9 @@
     "module": "./dist/esm/index.js",
     "browser": "./dist/iife/index.js",
     "types": "./dist/index.d.ts",
-    "files": ["dist"],
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "build": "tsup",
         "build:watch": "tsup --watch",
@@ -58,6 +60,7 @@
         "@jest/globals": "^29.7.0",
         "@types/jest": "^29.5.11",
         "@types/markdown-it": "^14.1.2",
+        "@types/node": "^22.15.29",
         "@typescript-eslint/eslint-plugin": "^6.19.1",
         "@typescript-eslint/parser": "^6.19.1",
         "eslint": "^8.56.0",
