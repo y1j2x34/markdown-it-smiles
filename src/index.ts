@@ -33,7 +33,7 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions) {
         const scripts = `
             ${scriptURL ? `<script src="${scriptURL}"></script>` : `<script>${scriptContent()}</script>`}
             <script>
-                document.addEventListener('DOMContentLoaded', () => {
+                document.addEventListener('DOMContentLoaded', function() {
                     SmiDrawer.apply();
                 })
             </script>

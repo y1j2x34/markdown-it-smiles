@@ -1,5 +1,3 @@
-// import {  } from 'smiles-drawer';
-
 export interface SmileDrawerTheme {
     C: string;
     O: string;
@@ -64,7 +62,7 @@ export interface SmileDrawerOptions {
 
 export interface PluginOptions {
     fontUrl?: string;
-    format?: 'svg' | 'img' | 'canvas';
+    format?: 'svg' | 'img';
     smileDrawerScript?: string;
 
     smileDrawerOptions?: {

@@ -6,7 +6,6 @@ import { SmileDrawerOptions } from '~/plugin-options';
 export function smilesInline(state: StateInline, silent: boolean) {
     const start = state.pos;
     const max = state.posMax;
-    debugger;
 
     // Check if it starts with $smiles{
     if (start + 8 > max) return false;

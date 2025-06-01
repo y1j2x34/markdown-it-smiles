@@ -1,5 +1,4 @@
 import { Options } from 'markdown-it';
-import JSON5 from 'json5';
 import type { Renderer, Token } from 'markdown-it/index.js';
 import { PluginContext, PluginOptions, SmileDrawerOptions } from '../plugin-options';
 import { extend } from '~/utils/extends';
@@ -13,8 +12,14 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         const data = token.content;
 
         const format = options.format || 'svg';
+        switch (format) {
+            case 'svg':
+            case 'img':
+                break;
+            default:
+                throw new Error(`Invalid format: ${format}, only 'svg' and 'img' are supported`);
+        }
         context.hasSmiles = true;
-        console.log('render', data);
 
         const ATTRS_MAP: Record<string, keyof SmileDrawerOptions> = {
             'data-smiles-reactant-weights': 'reactantWeights',
@@ -23,6 +28,8 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             'data-smiles-reaction-options': 'reactionOptions',
             'data-smiles-theme': 'theme',
             'data-smiles-weights': 'weights',
+            width: 'width',
+            height: 'height',
         };
         const attrs = Object.entries(ATTRS_MAP)
             .map(([key, smilesDrawerOptionsKey]) => {
@@ -53,22 +60,6 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             data-smiles="${data}" 
             ${attrs}
             data-smiles-options='${JSON.stringify(smilesOptions)}'></${format}>`;
-        // switch (format) {
-        //     case 'svg': {
-        //         return `<svg
-        //             data-smiles="${data}"
-        //             ${attrs}
-        //             data-smiles-options='${JSON.stringify(smilesOptions)}'></img>`;
-        //     }
-        //     case 'png': {
-        //         return `<img
-        //             data-smiles="${data}"
-        //             ${attrs}
-        //             data-smiles-options='${JSON.stringify(smilesOptions)}'></img>`;
-        //     }
-        //     case 'canvas':
-        //         return ``;
-        // }
     };
 }
 
