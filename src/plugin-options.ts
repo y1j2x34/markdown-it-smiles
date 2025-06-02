@@ -64,6 +64,7 @@ export interface PluginOptions {
     fontUrl?: string;
     format?: 'svg' | 'img';
     smileDrawerScript?: string;
+    renderAtParse?: boolean;
 
     smileDrawerOptions?: {
         default?: Partial<SmileDrawerOptions>;

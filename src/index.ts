@@ -4,7 +4,15 @@ import { smilesBlock } from './rules/smiles-block';
 import { generateBlockRenderer, generateInlineRenderer } from './renderer/renderer';
 import { smilesInline } from './rules/smiles-inline';
 
-export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions) {
+export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
+
+    if (options.renderAtParse) {
+        if (typeof document !== 'undefined') {
+            console.warn('renderAtParse is not supported in browser environment, it will be ignored');
+            options.renderAtParse = false;
+        }
+    }
+
     md.block.ruler.before('fence', 'smiles_block', smilesBlock, {
         alt: ['paragraph', 'reference', 'blockquote', 'list'],
     });
@@ -30,13 +38,7 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions) {
             return content;
         };
         const scriptURL = options.smileDrawerScript;
-        const scripts = `
-            ${scriptURL ? `<script src="${scriptURL}"></script>` : `<script>${scriptContent()}</script>`}
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    SmiDrawer.apply();
-                })
-            </script>
+        const styles = `
             <style>
                 .smiles-block {
                     display: inline-block;
@@ -52,6 +54,14 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions) {
                 }
             </style>
         `.replace(/ {4}/g, '');
-        return html + scripts;
+        const scripts = options.renderAtParse ? '' : `
+            ${scriptURL ? `<script src="${scriptURL}"></script>` : `<script>${scriptContent()}</script>`}
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    SmiDrawer.apply();
+                })
+            </script>
+        `.replace(/ {4}/g, '');
+        return html + scripts + styles;
     };
 }

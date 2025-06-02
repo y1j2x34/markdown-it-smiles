@@ -7,7 +7,8 @@ const md = markdownIt({
     typographer: true,
 });
 md.use(MarkdownItSmiles, {
-    format: 'svg',
+    format: 'img',
+    renderAtParse: true,
 });
 
 const html = md.render(`

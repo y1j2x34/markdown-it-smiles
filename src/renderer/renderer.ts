@@ -2,6 +2,10 @@ import { Options } from 'markdown-it';
 import type { Renderer, Token } from 'markdown-it/index.js';
 import { PluginContext, PluginOptions, SmileDrawerOptions } from '../plugin-options';
 import { extend } from '~/utils/extends';
+import { JSDOM } from 'jsdom';
+// @ts-ignore
+import SmilesDrawer from 'smiles-drawer';
+import { createCustomResourceLoader } from '~/utils/custom-jsdom-resource-loader';
 
 function generateRenderer(options: PluginOptions, context: PluginContext) {
     return function render(tokens: Token[], idx: number, smilesOptions: Partial<SmileDrawerOptions>): string {
@@ -12,9 +16,13 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         const data = token.content;
 
         const format = options.format || 'svg';
+        let tag = format;
         switch (format) {
             case 'svg':
             case 'img':
+                if (options.renderAtParse) {
+                    tag = 'svg';
+                }
                 break;
             default:
                 throw new Error(`Invalid format: ${format}, only 'svg' and 'img' are supported`);
@@ -34,7 +42,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         const attrs = Object.entries(ATTRS_MAP)
             .map(([key, smilesDrawerOptionsKey]) => {
                 if (!smilesOptions[smilesDrawerOptionsKey]) {
-                    return;
+                    return [];
                 }
                 const value = smilesOptions[smilesDrawerOptionsKey];
                 if (Array.isArray(value)) {
@@ -47,19 +55,88 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
                                 return item;
                             })
                             .join(';');
-                        return `${key}="${str}"`;
+                        return [key, str];
                     }
-                    return `${key}="${value.join(',')}"`;
+                    return [key, value.join(',')];
                 }
-                return `${key}="${value}"`;
+                return [key, value as string];
             })
             .filter(Boolean)
+            .reduce((acc, [key, value]) => {
+                if (key && value) {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {} as Record<string, string>);
+
+
+        Object.assign(attrs, {
+            'data-smiles': data,
+            'data-smiles-options': JSON.stringify(smilesOptions),
+        });
+        const attrsStr = Object.entries(attrs)
+            .map(([key, value]) => `${key}='${value}'`)
             .join(' ');
 
-        return `<${format} 
-            data-smiles="${data}" 
-            ${attrs}
-            data-smiles-options='${JSON.stringify(smilesOptions)}'></${format}>`;
+
+        const html = `<${tag} ${attrsStr}></${tag}>`;
+
+        if (!options.renderAtParse) {
+            return html;
+        }
+
+        const JSDOM = require('jsdom').JSDOM as typeof import('jsdom').JSDOM;
+        const dom = new JSDOM(html, {
+            resources: createCustomResourceLoader()
+        });
+        const exportedGlobalVariables = {
+            window: dom.window,
+            document: dom.window.document,
+            HTMLImageElement: dom.window.HTMLImageElement,
+            SVGElement: dom.window.SVGElement,
+            Image: function () {
+                return dom.window.document.createElement('img');
+            }
+        };
+        Object.assign(globalThis, exportedGlobalVariables);
+        try {
+            SmilesDrawer.SmiDrawer.apply();
+            const element = dom.window.document.querySelector(tag);
+            if (!element || format !== 'img') {
+                return element?.outerHTML ?? '';
+            }
+            element.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            const image = dom.window.document.createElement('img');
+            const canvas = dom.window.document.createElement('canvas');
+            for (const [key, value] of Object.entries(attrs)) {
+                canvas.setAttribute(key, value);
+            }
+            image.src = `data:image/svg+xml;base64,${Buffer.from(element.outerHTML).toString('base64')}`;
+            canvas.width = Number(element.getAttribute('width') ?? 0);
+            canvas.height = Number(element.getAttribute('height') ?? 0);
+            let loaded = false;
+            image.onload = () => {
+                loaded = true;
+            };
+            image.onerror = () => {
+                loaded = true;
+            };
+            const deasync = require('deasync');
+            while (!loaded) {
+                deasync.sleep(100);
+            }
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.drawImage(image, 0, 0);
+            }
+            const base64 = canvas.toDataURL('image/png');
+            return `<img src="${base64}" ${attrsStr}></img>`;
+        } finally {
+            for (const key in exportedGlobalVariables) {
+                // @ts-ignore
+                delete globalThis[key];
+            }
+        }
     };
 }
 
