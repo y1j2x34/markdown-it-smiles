@@ -1,9 +1,8 @@
-import { Options } from 'markdown-it';
-import type { Renderer, Token } from 'markdown-it/index.js';
-import { PluginContext, PluginOptions, SmileDrawerOptions } from '../plugin-options';
+import type { Token } from 'markdown-it/index.js';
 import { extend } from '~/utils/extends';
-import { JSDOM } from 'jsdom';
-// @ts-ignore
+import { PluginContext, PluginOptions, SmileDrawerOptions } from '../plugin-options';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import SmilesDrawer from 'smiles-drawer';
 import { createCustomResourceLoader } from '~/utils/custom-jsdom-resource-loader';
 
@@ -16,17 +15,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         const data = token.content;
 
         const format = options.format || 'svg';
-        let tag = format;
-        switch (format) {
-            case 'svg':
-            case 'img':
-                if (options.renderAtParse) {
-                    tag = 'svg';
-                }
-                break;
-            default:
-                throw new Error(`Invalid format: ${format}, only 'svg' and 'img' are supported`);
-        }
+        const tag = determineRenderTag(format, options);
         context.hasSmiles = true;
 
         const ATTRS_MAP: Record<string, keyof SmileDrawerOptions> = {
@@ -62,13 +51,15 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
                 return [key, value as string];
             })
             .filter(Boolean)
-            .reduce((acc, [key, value]) => {
-                if (key && value) {
-                    acc[key] = value;
-                }
-                return acc;
-            }, {} as Record<string, string>);
-
+            .reduce(
+                (acc, [key, value]) => {
+                    if (key && value) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                },
+                {} as Record<string, string>
+            );
 
         Object.assign(attrs, {
             'data-smiles': data,
@@ -78,16 +69,16 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             .map(([key, value]) => `${key}='${value}'`)
             .join(' ');
 
-
         const html = `<${tag} ${attrsStr}></${tag}>`;
 
         if (!options.renderAtParse) {
             return html;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const JSDOM = require('jsdom').JSDOM as typeof import('jsdom').JSDOM;
         const dom = new JSDOM(html, {
-            resources: createCustomResourceLoader()
+            resources: createCustomResourceLoader(),
         });
         const exportedGlobalVariables = {
             window: dom.window,
@@ -96,7 +87,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             SVGElement: dom.window.SVGElement,
             Image: function () {
                 return dom.window.document.createElement('img');
-            }
+            },
         };
         Object.assign(globalThis, exportedGlobalVariables);
         try {
@@ -121,6 +112,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             image.onerror = () => {
                 loaded = true;
             };
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
             const deasync = require('deasync');
             while (!loaded) {
                 deasync.sleep(100);
@@ -133,11 +125,26 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             return `<img src="${base64}" ${attrsStr}></img>`;
         } finally {
             for (const key in exportedGlobalVariables) {
-                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
                 delete globalThis[key];
             }
         }
     };
+}
+
+function determineRenderTag(format: string, options: PluginOptions) {
+    switch (format) {
+        case 'svg':
+        case 'img':
+            if (options.renderAtParse) {
+                return 'svg';
+            }
+            break;
+        default:
+            throw new Error(`Invalid format: ${format}, only 'svg' and 'img' are supported`);
+    }
+    return format;
 }
 
 function createRendererWrapper(
@@ -147,7 +154,7 @@ function createRendererWrapper(
     optionType: 'block' | 'inline' = 'block'
 ) {
     const render = generateRenderer(options, context);
-    return (tokens: Token[], idx: number, rendererOptions: Options, env: any, self: Renderer): string => {
+    return (tokens: Token[], idx: number): string => {
         const token = tokens[idx];
         if (!token) {
             return '';
@@ -157,7 +164,7 @@ function createRendererWrapper(
             {},
             options.smileDrawerOptions?.default,
             options.smileDrawerOptions?.[optionType],
-            blockOptions
+            blockOptions as Record<string, unknown>
         );
         const html = render(tokens, idx, smilesOptions);
         const attrs: Record<string, string> = {};

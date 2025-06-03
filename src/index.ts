@@ -5,7 +5,6 @@ import { generateBlockRenderer, generateInlineRenderer } from './renderer/render
 import { smilesInline } from './rules/smiles-inline';
 
 export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
-
     if (options.renderAtParse) {
         if (typeof document !== 'undefined') {
             console.warn('renderAtParse is not supported in browser environment, it will be ignored');
@@ -33,6 +32,7 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
         }
         const scriptPath = require.resolve('smiles-drawer/dist/smiles-drawer.min.js');
         const scriptContent = () => {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
             const fs = require('fs');
             const content = fs.readFileSync(scriptPath, 'utf-8');
             return content;
@@ -54,7 +54,9 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
                 }
             </style>
         `.replace(/ {4}/g, '');
-        const scripts = options.renderAtParse ? '' : `
+        const scripts = options.renderAtParse
+            ? ''
+            : `
             ${scriptURL ? `<script src="${scriptURL}"></script>` : `<script>${scriptContent()}</script>`}
             <script>
                 document.addEventListener('DOMContentLoaded', function() {

@@ -41,5 +41,5 @@ CC(=O)OC1=CC=CC=C1C(=O)O
 
 The aspirin molecule shows the characteristic acetyl group...
 `);
-console.log(html)
+console.log(html);
 require('fs').writeFileSync('debug.html', html);

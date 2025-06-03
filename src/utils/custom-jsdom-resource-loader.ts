@@ -1,6 +1,7 @@
-import type { JSDOM, FetchOptions } from 'jsdom';
+import type { FetchOptions } from 'jsdom';
 
 export function createCustomResourceLoader() {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const jsdom = require('jsdom');
     class CustomResourceLoader extends jsdom.ResourceLoader {
         fetch(url: string, options: FetchOptions) {
@@ -14,5 +15,5 @@ export function createCustomResourceLoader() {
             return super.fetch(url, options);
         }
     }
-    return new CustomResourceLoader()
+    return new CustomResourceLoader();
 }

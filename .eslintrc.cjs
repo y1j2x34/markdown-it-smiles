@@ -30,6 +30,6 @@ module.exports = {
         quotes: ['error', 'single'],
         'max-len': ['error', 120],
         'arrow-parens': 'off',
-        indent: ['error', 4],
+        indent: ['error', 4, { SwitchCase: 1 }],
     },
 };
