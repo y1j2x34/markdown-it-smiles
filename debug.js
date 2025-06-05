@@ -8,7 +8,7 @@ const md = markdownIt({
 });
 md.use(MarkdownItSmiles, {
     format: 'img',
-    renderAtParse: false,
+    renderAtParse: true,
 });
 try {
     const html = md.render(`# Hello World

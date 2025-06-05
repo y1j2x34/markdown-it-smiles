@@ -40,7 +40,7 @@ export default defineConfig(options => {
             platform: 'browser',
             target: 'es2020',
             globalName: 'MarkdownItSmiles',
-            external: ['fs', 'path', 'canvas', 'jsdom', 'deasync'],
+            external: ['fs', 'path', 'canvas', 'sharp', 'jsdom', 'deasync'],
             noExternal: ['smiles-drawer'],
         },
         // Browser environment - IIFE
@@ -55,7 +55,7 @@ export default defineConfig(options => {
             platform: 'node',
             target: 'es2020',
             globalName: 'MarkdownItSmiles',
-            external: ['fs', 'path', 'canvas', 'jsdom', 'deasync'],
+            external: ['fs', 'path', 'canvas', 'sharp', 'jsdom', 'deasync'],
             noExternal: ['smiles-drawer'],
             onSuccess: async () => {
                 const files = fs.readdirSync('./dist/browser/iife');

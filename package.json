@@ -47,7 +47,9 @@
     "module": "./dist/node/esm/index.js",
     "browser": "./dist/browser/esm/index.js",
     "types": "./dist/node/index.d.ts",
-    "files": ["dist"],
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "build": "tsup",
         "build:watch": "tsup --watch",
@@ -59,8 +61,7 @@
         "prepare": "husky install",
         "test": "jest",
         "tsc": "tsc --noEmit",
-        "typedoc": "typedoc ./src  --out ./docs/api --hideGenerator --name ts-library",
-        "postinstall": "cd node_modules/canvas && npm run install"
+        "typedoc": "typedoc ./src  --out ./docs/api --hideGenerator --name ts-library"
     },
     "lint-staged": {
         "**/*{ts,tsx,json,js,cjs,jsx}": "npx prettier --write"
@@ -98,13 +99,12 @@
         "whatwg-fetch": "^3.6.20"
     },
     "dependencies": {
-        "json5": "^2.2.3",
-        "smiles-drawer": "^2.1.7"
-    },
-    "peerDependencies": {
-        "markdown-it": "^14.0.0",
         "canvas": "^3.1.0",
         "deasync": "^0.1.30",
-        "jsdom": "^26.1.0"
+        "jsdom": "^26.1.0",
+        "json5": "^2.2.3",
+        "markdown-it": "^14.0.0",
+        "sharp": "^0.34.2",
+        "smiles-drawer": "^2.1.7"
     }
 }

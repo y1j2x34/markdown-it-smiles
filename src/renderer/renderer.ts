@@ -4,7 +4,6 @@ import { PluginContext, PluginOptions, SmileDrawerOptions } from '../plugin-opti
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import SmilesDrawer from 'smiles-drawer';
-import { createCustomResourceLoader } from '~/utils/custom-jsdom-resource-loader';
 
 function generateRenderer(options: PluginOptions, context: PluginContext) {
     return function render(tokens: Token[], idx: number, smilesOptions: Partial<SmileDrawerOptions>): string {
@@ -81,9 +80,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
 
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const JSDOM = require('jsdom').JSDOM as typeof import('jsdom').JSDOM;
-        const dom = new JSDOM(html, {
-            resources: createCustomResourceLoader(),
-        });
+        const dom = new JSDOM(html);
         const exportedGlobalVariables = {
             window: dom.window,
             document: dom.window.document,
@@ -101,32 +98,23 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
                 return element?.outerHTML ?? '';
             }
             element.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-            const image = dom.window.document.createElement('img');
-            const canvas = dom.window.document.createElement('canvas');
-            for (const [key, value] of Object.entries(attrs)) {
-                canvas.setAttribute(key, value);
-            }
-            image.src = `data:image/svg+xml;base64,${Buffer.from(element.outerHTML).toString('base64')}`;
-            canvas.width = Number(element.getAttribute('width') ?? 0);
-            canvas.height = Number(element.getAttribute('height') ?? 0);
-            let loaded = false;
-            image.onload = () => {
-                loaded = true;
-            };
-            image.onerror = () => {
-                loaded = true;
-            };
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
+
+            const sharp = require('sharp') as typeof import('sharp');
+            const bufferPromise = sharp(Buffer.from(element.outerHTML)).png().toBuffer();
+
+            let buffer: Buffer | undefined;
+
+            bufferPromise.then(it => {
+                buffer = it;
+            })
+
             const deasync = require('deasync');
-            while (!loaded) {
+            while (!buffer) {
                 deasync.sleep(100);
             }
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                ctx.drawImage(image, 0, 0);
-            }
-            const base64 = canvas.toDataURL('image/png');
-            return `<img src="${base64}" ${attrsStr}></img>`;
+
+            const base64 = buffer.toString('base64');
+            return `<img src="data:image/png;base64,${base64}" ${attrsStr}></img>`;
         } finally {
             for (const key in exportedGlobalVariables) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
