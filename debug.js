@@ -1,5 +1,5 @@
 const markdownIt = require('markdown-it');
-const { MarkdownItSmiles } = require('./dist/index');
+const { MarkdownItSmiles } = require('./dist/node/index.js');
 
 const md = markdownIt({
     html: true,
@@ -8,7 +8,7 @@ const md = markdownIt({
 });
 md.use(MarkdownItSmiles, {
     format: 'img',
-    renderAtParse: true,
+    renderAtParse: false,
 });
 try {
     const html = md.render(`# Hello World

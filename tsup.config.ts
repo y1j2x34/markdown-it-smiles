@@ -1,66 +1,69 @@
+import fs from 'fs';
+import path from 'path';
 import { defineConfig } from 'tsup';
-// https://tsup.egoist.dev/#usage
 
 export default defineConfig(options => {
+    const baseConfig = {
+        minify: true,
+        entry: ['src/index.ts'],
+        splitting: true,
+        sourcemap: true,
+        legacyOutput: true,
+        treeshake: true,
+        dts: true,
+        drop_console: !options.watch,
+    };
+
     return [
         // Node.js environment - ESM and CJS
         {
-            entry: ['src/index.ts'],
+            ...baseConfig,
+            ...options,
             outDir: 'dist/node',
-            splitting: true,
-            sourcemap: true,
             clean: true,
-            dts: true,
-            drop_console: !options.watch,
             format: ['cjs', 'esm'],
-            legacyOutput: true,
-            treeshake: true,
             define: {
                 'process.env.IS_BROWSER': 'false',
             },
             platform: 'node',
             target: 'node16',
         },
-        // Browser environment - ESM and IIFE
+        // Browser environment - ESM
         {
-            entry: ['src/index.ts'],
+            ...baseConfig,
             outDir: 'dist/browser',
-            splitting: true,
-            sourcemap: true,
-            clean: false, // Don't clean since we have multiple configs
-            dts: true,
-            drop_console: !options.watch,
-            format: ['esm', 'iife'],
-            legacyOutput: true,
-            treeshake: true,
+            clean: false,
+            format: ['esm'],
             define: {
                 'process.env.IS_BROWSER': 'true',
             },
             platform: 'browser',
             target: 'es2020',
             globalName: 'MarkdownItSmiles',
-            external: [
-                'fs',
-                'path',
-                'canvas',
-                'jsdom',
-                'deasync',
-                'http',
-                'https',
-                'net',
-                'tls',
-                'events',
-                'stream',
-                'vm',
-                'url',
-                'crypto',
-                'child_process',
-                'util',
-                'os',
-                'zlib',
-                'assert',
-            ],
+            external: ['fs', 'path', 'canvas', 'jsdom', 'deasync'],
             noExternal: ['smiles-drawer'],
+        },
+        // Browser environment - IIFE
+        {
+            ...baseConfig,
+            outDir: 'dist/browser',
+            clean: false,
+            format: ['iife'],
+            define: {
+                'process.env.IS_BROWSER': 'true',
+            },
+            platform: 'node',
+            target: 'es2020',
+            globalName: 'MarkdownItSmiles',
+            external: ['fs', 'path', 'canvas', 'jsdom', 'deasync'],
+            noExternal: ['smiles-drawer'],
+            onSuccess: async () => {
+                const files = fs.readdirSync('./dist/browser/iife');
+                const canvasFile = files.find(it => it.indexOf('canvas') > -1);
+                if (canvasFile) {
+                    fs.rmSync(path.resolve(__dirname, './dist/browser/iife/', canvasFile));
+                }
+            },
         },
     ];
 });
