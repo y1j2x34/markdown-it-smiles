@@ -1,6 +1,9 @@
 import type { FetchOptions } from 'jsdom';
 
 export function createCustomResourceLoader() {
+    if (process.env.IS_BROWSER === 'true') {
+        return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const jsdom = require('jsdom');
     class CustomResourceLoader extends jsdom.ResourceLoader {

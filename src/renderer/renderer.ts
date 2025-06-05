@@ -75,6 +75,10 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             return html;
         }
 
+        if (process.env.IS_BROWSER) {
+            return html;
+        }
+
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const JSDOM = require('jsdom').JSDOM as typeof import('jsdom').JSDOM;
         const dom = new JSDOM(html, {

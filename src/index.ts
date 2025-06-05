@@ -1,8 +1,9 @@
 /**
  * markdown-it-smiles plugin
  *
- * This module provides a Markdown-it plugin for rendering SMILES (Simplified Molecular Input Line Entry System) strings as chemical structure diagrams.
- * It supports both block and inline SMILES, and can render as SVG or image using the smiles-drawer library.
+ * This module provides a Markdown-it plugin for rendering SMILES (Simplified Molecular Input Line Entry System)
+ * strings as chemical structure diagrams. It supports both block and inline SMILES, and can render as SVG or
+ * image using the smiles-drawer library.
  *
  * Usage:
  *   import MarkdownIt from 'markdown-it';
@@ -65,15 +66,21 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
         if (!context.hasSmiles) {
             return html;
         }
-        // Resolve the path to the smiles-drawer script
-        const scriptPath = require.resolve('smiles-drawer/dist/smiles-drawer.min.js');
+
         // Function to read the script content (for inline script injection)
         const scriptContent = () => {
+            console.log(process.env.IS_BROWSER);
+            // Only available in Node.js environment
+            if (process.env.IS_BROWSER) {
+                return '';
+            }
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             const fs = require('fs');
+            const scriptPath = require.resolve('smiles-drawer/dist/smiles-drawer.min.js');
             const content = fs.readFileSync(scriptPath, 'utf-8');
             return content;
         };
+
         const scriptURL = options.smileDrawerScript;
         // Styles for SMILES blocks and inline elements
         const styles = `
@@ -92,6 +99,7 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
                 }
             </style>
         `.replace(/ {4}/g, '');
+
         // Scripts for smiles-drawer (external or inline) and auto-apply
         const scripts = options.renderAtParse
             ? ''
