@@ -106,7 +106,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
 
             bufferPromise.then(it => {
                 buffer = it;
-            })
+            });
 
             const deasync = require('deasync');
             while (!buffer) {

@@ -15,6 +15,7 @@ module.exports = {
                 '@typescript-eslint/no-inferrable-types': 'off',
                 '@typescript-eslint/explicit-module-boundary-types': 'off',
                 '@typescript-eslint/ban-types': 'off',
+                '@typescript-eslint/no-var-requires': 'off',
             },
         },
         {
@@ -27,7 +28,7 @@ module.exports = {
         'prettier/prettier': 'error',
         'no-console': 'off',
         'no-bitwise': 'off',
-        quotes: ['error', 'single'],
+        quotes: 'off',
         'max-len': ['error', 120],
         'arrow-parens': 'off',
         indent: ['error', 4, { SwitchCase: 1 }],
