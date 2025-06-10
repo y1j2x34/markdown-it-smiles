@@ -4,7 +4,10 @@
         "baseUrl": ".",
         "target": "ESNext",
         "module": "ESNext",
-        "lib": ["ESNext", "DOM"],
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
         "skipLibCheck": true,
         "esModuleInterop": true,
         "moduleResolution": "Bundler",
@@ -13,10 +16,14 @@
         "strict": true,
         "noImplicitAny": true,
         "noFallthroughCasesInSwitch": true,
-        "noUncheckedIndexedAccess": true,
-        "paths": {
-            "~/*": ["./src/*"]
-        }
+        "noUncheckedIndexedAccess": true
     },
-    "include": ["src", "tests", "dev", "jest.config.ts", "jest.setup.ts", "tsup.config.ts"]
+    "include": [
+        "src",
+        "tests",
+        "dev",
+        "jest.config.ts",
+        "jest.setup.ts",
+        "tsup.config.ts"
+    ]
 }

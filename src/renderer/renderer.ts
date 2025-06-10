@@ -1,9 +1,10 @@
 import type { Token } from 'markdown-it/index.js';
-import { extend } from '~/utils/extends';
+import { extend } from '../utils/extends';
 import { PluginContext, PluginOptions, SmileDrawerOptions } from '../plugin-options';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import SmilesDrawer from 'smiles-drawer';
+import { isBrowser } from '../utils/isBrowser';
 
 function generateRenderer(options: PluginOptions, context: PluginContext) {
     return function render(tokens: Token[], idx: number, smilesOptions: Partial<SmileDrawerOptions>): string {
@@ -65,7 +66,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             'data-smiles-options': JSON.stringify(smilesOptions),
         });
         const attrsStr = Object.entries(attrs)
-            .map(([key, value]) => `${key}='${value}'`)
+            .map(([key, value]) => `${key}="${value}"`)
             .join(' ');
 
         const html = `<${tag} ${attrsStr}></${tag}>`;
@@ -74,7 +75,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
             return html;
         }
 
-        if (process.env.IS_BROWSER) {
+        if (isBrowser()) {
             return html;
         }
 

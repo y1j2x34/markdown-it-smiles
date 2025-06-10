@@ -1,6 +1,6 @@
 import JSON5 from 'json5';
 import { StateInline } from 'markdown-it/index.js';
-import { SmileDrawerOptions } from '~/plugin-options';
+import { SmileDrawerOptions } from '../plugin-options';
 
 // Inline SMILES rule for markdown-it
 export function smilesInline(state: StateInline, silent: boolean) {

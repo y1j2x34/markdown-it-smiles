@@ -26,12 +26,12 @@ import { PluginContext, PluginOptions } from './plugin-options';
 import { smilesBlock } from './rules/smiles-block';
 import { generateBlockRenderer, generateInlineRenderer } from './renderer/renderer';
 import { smilesInline } from './rules/smiles-inline';
+import { isBrowser } from './utils/isBrowser';
 
-const smilesDrawerScriptPath = require.resolve('smiles-drawer/dist/smiles-drawer.min.js');
 const smilesDrawerScript = (() => {
-    let script: string | undefined =
-        typeof process === 'object' && process.env?.NODE_ENV === 'test' ? 'console.log("test script")' : '';
+    let script: string = '';
     return () => {
+        const smilesDrawerScriptPath = require.resolve('smiles-drawer/dist/smiles-drawer.min.js');
         if (!script) {
             const fs = require('fs');
             script = fs.readFileSync(smilesDrawerScriptPath, 'utf-8');
@@ -83,7 +83,7 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
         // Function to read the script content (for inline script injection)
         const scriptContent = () => {
             // Only available in Node.js environment
-            if (process.env.IS_BROWSER) {
+            if (isBrowser()) {
                 return '';
             }
             return smilesDrawerScript();

@@ -23,7 +23,7 @@ export default defineConfig(options => {
             clean: true,
             format: ['cjs', 'esm'],
             define: {
-                'process.env.IS_BROWSER': 'false',
+                'IS_BROWSER': 'false',
             },
             platform: 'node',
             target: 'node16',
@@ -35,7 +35,7 @@ export default defineConfig(options => {
             clean: false,
             format: ['esm'],
             define: {
-                'process.env.IS_BROWSER': 'true',
+                'IS_BROWSER': 'true',
             },
             platform: 'browser',
             target: 'es2020',
@@ -50,7 +50,7 @@ export default defineConfig(options => {
             clean: false,
             format: ['iife'],
             define: {
-                'process.env.IS_BROWSER': 'true',
+                'IS_BROWSER': 'true',
             },
             platform: 'node',
             target: 'es2020',
