@@ -63,7 +63,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
 
         Object.assign(attrs, {
             'data-smiles': data,
-            'data-smiles-options': JSON.stringify(smilesOptions),
+            'data-smiles-options': JSON.stringify(smilesOptions).replaceAll('"', '\''),
         });
         const attrsStr = Object.entries(attrs)
             .map(([key, value]) => `${key}="${value}"`)
@@ -93,7 +93,18 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         };
         Object.assign(globalThis, exportedGlobalVariables);
         try {
-            SmilesDrawer.SmiDrawer.apply();
+            let error: Error | undefined;
+            SmilesDrawer.SmiDrawer.apply(undefined, undefined, undefined, undefined, null, (err: Error) => {
+                error = err;
+                options.errorHandling?.onError?.(err);
+            })
+            if (error) {
+                if (options.errorHandling?.fallbackImage) {
+                    return `<img src="${options.errorHandling.fallbackImage}" ${attrsStr}></img>`;
+                } else {
+                    return `<div class="smiles-error" data-smiles-error="Invalid SMILES: \"${data}\"">${error.message}</div>`;
+                }
+            }
             const element = dom.window.document.querySelector(tag);
             if (!element || format !== 'img') {
                 return element?.outerHTML ?? '';

@@ -105,8 +105,26 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
                     width: 1em;
                     height: 1em;
                 }
+                .smiles-error {
+                    color: red;
+                    font-size: 12px;
+                    font-weight: bold;
+                    white-space: pre;
+                    border-left: red 4px solid;
+                    padding-left: 1em;
+                }
+                .smiles-error:before {
+                    content: attr(data-smiles-error);
+                    display: block;
+                    margin-bottom: 0.5em;
+                }
+                .smiles-inline:has(.smiles-error) {
+                    display: block;
+                    height: fit-content;
+                    width: fit-content;
+                }
             </style>
-        `.replace(/ {4}/g, '');
+        `.replace(/ {16}/g, '');
 
         // Scripts for smiles-drawer (external or inline) and auto-apply
         const scripts = options.renderAtParse

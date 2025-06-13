@@ -1,6 +1,15 @@
 const markdownIt = require('markdown-it');
 const { MarkdownItSmiles } = require('./dist/node/index.js');
+const originalJSONParse = JSON.parse;
+JSON.parse = function (...args) {
+    try {
+        return originalJSONParse(...args);
+    } catch (error) {
+        console.log('JSON parse error', args, error);
+        throw error;
+    }
 
+}
 const md = markdownIt({
     html: true,
     breaks: true,
@@ -9,11 +18,24 @@ const md = markdownIt({
 md.use(MarkdownItSmiles, {
     format: 'img',
     renderAtParse: true,
+    errorHandling: {
+        onError: (err) => {
+            console.error('error', err.message);
+        },
+        // fallbackImage: 'error.png'
+    }
 });
 try {
     const html = md.render(`# Hello World
 
+Invalid SMILES:
+$smiles{InvalidSMILES}
+
 This is a test of the markdown-it library.
+
+$smiles{C1=CC=CC=C1}
+
+
 \`\`\`smiles { width: 100, height: 100}
 C1=CC=CC=C1
 \`\`\`

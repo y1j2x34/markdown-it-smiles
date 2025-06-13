@@ -89,37 +89,37 @@ CC(=O)O
         });
     });
 
-    describe('Error Handling', () => {
-        it('should handle invalid SMILES syntax', () => {
-            const errorHandler = vi.fn();
-            md.use(MarkdownItSmiles, {
-                errorHandling: {
-                    onError: errorHandler,
-                    fallbackImage: 'error.png'
-                }
-            });
+    if (!IS_BROWSER) {
+        describe('Error Handling', () => {
+            it('should handle invalid SMILES syntax', () => {
+                const errorHandler = vi.fn();
+                md.use(MarkdownItSmiles, {
+                    errorHandling: {
+                        onError: errorHandler,
+                        fallbackImage: 'error.png'
+                    }
+                });
 
-            const result = md.render('$smiles{InvalidSMILES}');
-            expect(errorHandler).toHaveBeenCalled();
-            expect(result).toContain('error.png');
+                const result = md.render('$smiles{InvalidSMILES}');
+                expect(errorHandler).toHaveBeenCalled();
+                expect(result).toContain('error.png');
+            });
         });
-    });
+    }
 
     describe('Environment Compatibility', () => {
-        it('should warn about renderAtParse in browser environment', () => {
-            const consoleSpy = vi.spyOn(console, 'warn');
-            // Mock browser environment
-            (global as any).document = {};
+        if (IS_BROWSER) {
+            it('should warn about renderAtParse in browser environment', () => {
+                const consoleSpy = vi.spyOn(console, 'warn');
 
-            md.use(MarkdownItSmiles, { renderAtParse: true });
-            expect(consoleSpy).toHaveBeenCalledWith(
-                'renderAtParse is not supported in browser environment, it will be ignored'
-            );
+                md.use(MarkdownItSmiles, { renderAtParse: true });
+                expect(consoleSpy).toHaveBeenCalledWith(
+                    'renderAtParse is not supported in browser environment, it will be ignored'
+                );
 
-            // Cleanup
-            delete (global as any).document;
-            consoleSpy.mockRestore();
-        });
+                consoleSpy.mockRestore();
+            });
+        }
 
         it('should include necessary scripts and styles', () => {
             md.use(MarkdownItSmiles);
