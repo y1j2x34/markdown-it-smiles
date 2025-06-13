@@ -1,15 +1,6 @@
 const markdownIt = require('markdown-it');
 const { MarkdownItSmiles } = require('./dist/node/index.js');
-const originalJSONParse = JSON.parse;
-JSON.parse = function (...args) {
-    try {
-        return originalJSONParse(...args);
-    } catch (error) {
-        console.log('JSON parse error', args, error);
-        throw error;
-    }
 
-}
 const md = markdownIt({
     html: true,
     breaks: true,

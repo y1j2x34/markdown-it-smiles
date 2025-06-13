@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies (pnpm)
         run: pnpm install
       - name: Running tests
-        run: pnpm t -- --passWithNoTests
+        run: pnpm test:ci
       - name: Upload coverage data to codacy
         uses: codacy/codacy-coverage-reporter-action@master
         with:

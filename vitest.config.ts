@@ -38,6 +38,12 @@ export default defineConfig({
                 define: {
                     IS_BROWSER: 'true'
                 }
-            }]
+            }],
+        coverage: {
+            provider: 'istanbul',
+            reporter: ['html', 'text-summary', 'cobertura'],
+            include: ['src/**/*.ts'],
+            reportsDirectory: 'report/coverage',
+        }
     }
 });
