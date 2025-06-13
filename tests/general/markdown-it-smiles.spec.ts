@@ -94,6 +94,7 @@ CC(=O)O
             it('should handle invalid SMILES syntax', () => {
                 const errorHandler = vi.fn();
                 md.use(MarkdownItSmiles, {
+                    renderAtParse: true,
                     errorHandling: {
                         onError: errorHandler,
                         fallbackImage: 'error.png'

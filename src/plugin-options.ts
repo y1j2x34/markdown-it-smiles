@@ -128,7 +128,7 @@ export interface PluginOptions {
         block?: Partial<SmileDrawerOptions>;
     };
     /**
-     * Error handling options.
+     * Error handling options (only works when renderAtParse is true).
      * - onError: callback for handling errors
      * - fallbackImage: image to use if rendering fails
      */
