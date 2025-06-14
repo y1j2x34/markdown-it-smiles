@@ -30,6 +30,8 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies (pnpm)
         run: pnpm install
+      - name: Install playwright browsers
+        run: pnpm exec playwright install --with-deps
       - name: Running tests
         run: pnpm test:ci
       - name: Upload coverage data to codacy
