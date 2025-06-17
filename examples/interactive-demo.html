@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>markdown-it-smiles Example</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Droid Sans', Arial, sans-serif;
+            max-width: 90vw;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .nav {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .nav a {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .input-section, .output-section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: stretch;
+        }
+        
+        .input-section h3, .output-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        textarea {
+            flex: 1;
+            height: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: none;
+        }
+        
+        .output {
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 15px;
+            background: #fafafa;
+            min-height: 300px;
+            overflow: auto;
+        }
+        
+        .examples {
+            margin-top: 30px;
+        }
+        
+        .example-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .example-button:hover {
+            background: #0056b3;
+        }
+        
+        .smiles-container {
+            margin: 1em 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>markdown-it-smiles Plugin Demo</h1>
+        <p>This demo shows how to use the markdown-it-smiles plugin to render chemical structures from SMILES notation.</p>
+    </div>
+
+    <div class="nav">
+        <a href="index.html">← Back to Main Demo</a>
+        <a href="https://github.com/y1j2x34/markdown-it-smiles" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    
+
+    <div class="examples">
+        <h3>Example Templates</h3>
+        <button class="example-button" onclick="loadExample('basic')">Basic Examples</button>
+        <button class="example-button" onclick="loadExample('organic')">Organic Compounds</button>
+        <button class="example-button" onclick="loadExample('drugs')">Drug Molecules</button>
+        <button class="example-button" onclick="loadExample('inline')">Inline Examples</button>
+    </div>
+    
+    <div class="container">
+        <div class="input-section">
+            <h3>Markdown Input</h3>
+            <textarea id="markdown-input" placeholder="Enter your markdown with SMILES here..."># Chemical Structures Demo
+
+## Block SMILES
+Here's a simple alcohol (ethanol):
+
+```smiles
+CCO
+```
+
+## Block SMILES with Options
+Benzene with custom size:
+
+```smiles {"width": 300, "height": 250, "bondThickness": 1.0}
+c1ccccc1
+```
+
+## Inline SMILES
+The molecule $smiles{CCO} is ethanol, while $smiles{C1CCCCC1} is cyclohexane.
+
+## Complex Structures
+Caffeine structure:
+
+```smiles {"width": 400, "height": 300}
+CN1C=NC2=C1C(=O)N(C(=O)N2C)C
+```
+
+Aspirin:
+
+```smiles
+CC(=O)OC1=CC=CC=C1C(=O)O
+```</textarea>
+        </div>
+        
+        <div class="output-section">
+            <h3>Rendered Output</h3>
+            <div id="output" class="output"></div>
+        </div>
+    </div>
+    
+
+    <!-- Load required libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.1.7/dist/smiles-drawer.min.js"></script>
+    <script src="./dist/browser/iife/index.js"></script>
+    <!-- Inline the plugin code for demo purposes -->
+    <script>
+        
+        // Initialize markdown-it with the plugin
+        const md = window.markdownit().use(MarkdownItSmiles.MarkdownItSmiles, {
+            smilesDrawerOptions: {
+                default: {
+                    bondThickness: 0.6,
+                    bondLength: 15,
+                    atomVisualization: 'default',
+                    isomeric: false,
+                    terminalCarbons: false,
+                    explicitHydrogens: false,
+                    compactDrawing: true,
+                    fontSizeLarge: 5,
+                    fontSizeSmall: 3,
+                    padding: 20.0
+                }
+            }
+
+        });
+        
+        // Update output
+        function updateOutput() {
+            const input = document.getElementById('markdown-input').value;
+            const output = document.getElementById('output');
+            
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.style.cssText = `
+                    width: 479px;
+                    height: 1778px;
+                    border: none;
+                `;
+                iframe.srcdoc = md.render(input);
+                iframe.onload = () => {
+                    const height = iframe.contentDocument.body.scrollHeight;
+                    const width = iframe.contentDocument.body.scrollWidth;
+                    iframe.style.height = `${height + 100}px`;
+                    iframe.style.width = `${width + 40}px`;
+                }
+
+                output.innerHTML = '';
+                output.appendChild(iframe);
+                
+            } catch (error) {
+                output.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Example templates
+        const examples = {
+            basic: `# Basic SMILES Examples
+
+## Simple Molecules
+Water: $smiles{O}
+Methane: $smiles{C}
+Ethanol: $smiles{CCO}
+
+## Block Examples
+\`\`\`smiles
+CCO
+\`\`\``,
+            
+            organic: `# Organic Chemistry
+
+## Alcohols
+- Methanol: $smiles{CO}
+- Ethanol: $smiles{CCO}
+- Propanol: $smiles{CCCO}
+
+## Aromatic Compounds
+Benzene:
+\`\`\`smiles {"width": 300, "height": 250}
+c1ccccc1
+\`\`\`
+
+Toluene:
+\`\`\`smiles
+Cc1ccccc1
+\`\`\``,
+            
+            drugs: `# Drug Molecules
+
+## Aspirin
+\`\`\`smiles {"width": 400, "height": 300}
+CC(=O)OC1=CC=CC=C1C(=O)O
+\`\`\`
+
+## Caffeine
+\`\`\`smiles {"width": 400, "height": 300}
+CN1C=NC2=C1C(=O)N(C(=O)N2C)C
+\`\`\`
+
+## Ibuprofen
+\`\`\`smiles
+CC(C)CC1=CC=C(C=C1)C(C)C(=O)O
+\`\`\``,
+            
+            inline: `# Inline SMILES Examples
+
+Common solvents include $smiles{CCO} (ethanol), $smiles{O} (water), and $smiles{CC(C)=O} (acetone).
+
+The difference between $smiles{C1CCCCC1} (cyclohexane) and $smiles{c1ccccc1} (benzene) is aromaticity.
+
+Functional groups: $smiles{CC(=O)O} (carboxylic acid), $smiles{CCO} (alcohol), $smiles{CC=O} (aldehyde).`
+        };
+        
+        function loadExample(type) {
+            document.getElementById('markdown-input').value = examples[type];
+            updateOutput();
+        }
+        
+        // Event listeners
+        document.getElementById('markdown-input').addEventListener('input', updateOutput);
+        
+        // Initial render
+        updateOutput();
+    </script>
+</body>
+</html> 
