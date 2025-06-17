@@ -1,18 +1,17 @@
 {
-    "name": "ts-library-boilerplate",
+    "name": "markdown-it-smiles",
     "version": "1.0.0",
-    "description": "",
-    "keywords": [],
-    "homepage": "https://github.com/y1j2x34/ts-library-boilerplate#readme",
+    "description": "A markdown-it plugin for rendering SMILES (Simplified Molecular Input Line Entry System) chemical structures",
+    "homepage": "https://github.com/y1j2x34/markdown-it-smiles#readme",
     "bugs": {
-        "url": "https://github.com/y1j2x34/ts-library-boilerplate/issues"
+        "url": "https://github.com/y1j2x34/markdown-it-smiles/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/y1j2x34/ts-library-boilerplate.git"
+        "url": "git+https://github.com/y1j2x34/markdown-it-smiles.git"
     },
-    "license": "ISC",
-    "author": "",
+    "license": "MIT",
+    "author": "ChienHsinYang <y1j2x34@gmail.com>",
     "exports": {
         ".": {
             "node": {
@@ -47,8 +46,19 @@
     "module": "./dist/node/esm/index.js",
     "browser": "./dist/browser/esm/index.js",
     "types": "./dist/node/index.d.ts",
+    "keywords": [
+        "markdown-it",
+        "plugin",
+        "smiles",
+        "chemistry",
+        "molecular",
+        "structure",
+        "chemical"
+    ],
     "files": [
-        "dist"
+        "dist",
+        "CHANGELOG.md",
+        "README.md"
     ],
     "scripts": {
         "build": "tsup",
@@ -63,7 +73,8 @@
         "test:debug": "vitest --inspect --no-file-parallelism --project node",
         "test:ci": "vitest run --browser.headless --coverage ",
         "tsc": "tsc --noEmit",
-        "typedoc": "typedoc ./src  --out ./docs/api --hideGenerator --name ts-library"
+        "typedoc": "typedoc ./src  --out ./docs/api --hideGenerator --name ts-library",
+        "postinstall": "cd node_modules/canvas && npm run install"
     },
     "lint-staged": {
         "**/*{ts,tsx,json,js,cjs,jsx}": "npx prettier --write"
