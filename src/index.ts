@@ -104,6 +104,10 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
                     display: inline-block;
                     width: 1em;
                     height: 1em;
+                    vertical-align: middle;
+                }
+                .smiles-inline > svg, .smiles-inline > img {
+                    vertical-align: top;
                 }
                 .smiles-error {
                     color: red;
