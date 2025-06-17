@@ -1,13 +1,13 @@
 import type { Token } from 'markdown-it/index.js';
 import { extend } from '../utils/extends';
-import { PluginContext, PluginOptions, SmileDrawerOptions } from '../plugin-options';
+import { PluginContext, PluginOptions, SmilesDrawerOptions } from '../plugin-options';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import SmilesDrawer from 'smiles-drawer';
 import { isBrowser } from '../utils/isBrowser';
 
 function generateRenderer(options: PluginOptions, context: PluginContext) {
-    return function render(tokens: Token[], idx: number, smilesOptions: Partial<SmileDrawerOptions>): string {
+    return function render(tokens: Token[], idx: number, smilesOptions: Partial<SmilesDrawerOptions>): string {
         const token = tokens[idx];
         if (!token) {
             return '';
@@ -18,7 +18,7 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         const tag = determineRenderTag(format, options);
         context.hasSmiles = true;
 
-        const ATTRS_MAP: Record<string, keyof SmileDrawerOptions> = {
+        const ATTRS_MAP: Record<string, keyof SmilesDrawerOptions> = {
             'data-smiles-reactant-weights': 'reactantWeights',
             'data-smiles-reagent-weights': 'reagentWeights',
             'data-smiles-product-weights': 'productWeights',
@@ -163,11 +163,11 @@ function createRendererWrapper(
         if (!token) {
             return '';
         }
-        const blockOptions: SmileDrawerOptions = token.info ? JSON.parse(token.info) : {};
-        const smilesOptions: Partial<SmileDrawerOptions> = extend(
+        const blockOptions: SmilesDrawerOptions = token.info ? JSON.parse(token.info) : {};
+        const smilesOptions: Partial<SmilesDrawerOptions> = extend(
             {},
-            options.smileDrawerOptions?.default,
-            options.smileDrawerOptions?.[optionType],
+            options.smilesDrawerOptions?.default,
+            options.smilesDrawerOptions?.[optionType],
             blockOptions as Record<string, unknown>
         );
         const html = render(tokens, idx, smilesOptions);

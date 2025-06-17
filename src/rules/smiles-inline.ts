@@ -1,6 +1,6 @@
 import JSON5 from 'json5';
 import { StateInline } from 'markdown-it/index.js';
-import { SmileDrawerOptions } from '../plugin-options';
+import { SmilesDrawerOptions } from '../plugin-options';
 
 // Inline SMILES rule for markdown-it
 export function smilesInline(state: StateInline, silent: boolean) {
@@ -28,7 +28,7 @@ export function smilesInline(state: StateInline, silent: boolean) {
     const smilesContent = state.src.slice(start + 8, pos - 1);
 
     // Check for second { (parameters)
-    let params: Partial<SmileDrawerOptions> = {};
+    let params: Partial<SmilesDrawerOptions> = {};
     let paramsEnd = smilesEnd;
     if (state.src[smilesEnd] === '{') {
         pos = smilesEnd + 1;

@@ -1,10 +1,10 @@
 /**
- * Theme colors for SmileDrawer rendering engine.
+ * Theme colors for SmilesDrawer rendering engine.
  * Each property represents a color for a specific atom or drawing element.
  *
  * See: https://github.com/reymond-group/smilesDrawer#options
  */
-export interface SmileDrawerTheme {
+export interface SmilesDrawerTheme {
     /** Carbon color (default: '#fff' for dark, '#222' for light) */
     C: string;
     /** Oxygen color (default: '#e74c3c') */
@@ -38,7 +38,7 @@ export interface SmileDrawerTheme {
  *
  * See: https://github.com/reymond-group/smilesDrawer#options
  */
-export interface SmileDrawerOptions {
+export interface SmilesDrawerOptions {
     /** Drawing width (default: 500px; for inline SMILES: 1em) */
     width?: number;
     /** Drawing height (default: 500px; for inline SMILES: 1em) */
@@ -76,7 +76,7 @@ export interface SmileDrawerOptions {
     /** Draw debug information to canvas (default: false) */
     debug?: boolean;
     /** Color themes for rendering, keyed by theme name (default: {dark, light}) */
-    themes?: Record<string, SmileDrawerTheme>;
+    themes?: Record<string, SmilesDrawerTheme>;
     /** Name of the theme to use (e.g. 'light' or 'dark') */
     theme?: string;
     /** Weights for reactants in reactions (advanced, rarely used) */
@@ -107,7 +107,7 @@ export interface PluginOptions {
     /**
      * Path or URL to the SmileDrawer script to use for rendering.
      */
-    smileDrawerScript?: string;
+    smilesDrawerScript?: string;
     /**
      * If true, the smiles will be rendered at parse time.
      * This is useful for markdown-it-container, but it will work only in node environment.
@@ -119,13 +119,13 @@ export interface PluginOptions {
      * - inline: options for inline SMILES
      * - block: options for block SMILES
      */
-    smileDrawerOptions?: {
+    smilesDrawerOptions?: {
         /** Default options for all renderings */
-        default?: Partial<SmileDrawerOptions>;
+        default?: Partial<SmilesDrawerOptions>;
         /** Options for inline SMILES */
-        inline?: Partial<SmileDrawerOptions>;
+        inline?: Partial<SmilesDrawerOptions>;
         /** Options for block SMILES */
-        block?: Partial<SmileDrawerOptions>;
+        block?: Partial<SmilesDrawerOptions>;
     };
     /**
      * Error handling options (only works when renderAtParse is true).
