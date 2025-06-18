@@ -1,0 +1,15 @@
+{
+    "name": "markdown-it-smiles-ssr",
+    "version": "1.0.0",
+    "description": "Server-side rendering examples for markdown-it-smiles",
+    "main": "index.js",
+    "scripts": {
+        "build": "node index.js",
+        "serve": "node -e \"console.log('Run: npm run build && open index.html')\""
+    },
+    "dependencies": {
+        "markdown-it": "^14.0.0"
+    },
+    "author": "",
+    "license": "MIT"
+}
