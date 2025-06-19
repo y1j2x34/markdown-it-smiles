@@ -1,29 +1,31 @@
-module.exports = {
-  name: 'Biochemistry',
-  description: 'Amino acids, nucleotides, and biomolecules',
-  options: {
-    renderAtParse: true,
-    smilesDrawerOptions: {
-      default: {
-        width: 400,
-        height: 300,
-        theme: 'light'
-      },
-      amino: {
-        width: 350,
-        height: 280,
-        theme: 'light',
-        bondThickness: 0.7
-      },
-      nucleotide: {
-        width: 500,
-        height: 400,
-        theme: 'light',
-        bondThickness: 0.8
-      }
-    }
-  },
-  content: `# Biochemical Molecules
+const markdownIt = require('markdown-it');
+const { MarkdownItSmiles } = require('markdown-it-smiles');
+
+module.exports = function generateBiochemistryExample() {
+    const md = markdownIt().use(MarkdownItSmiles, {
+        renderAtParse: true,
+        smilesDrawerOptions: {
+            default: {
+                width: 400,
+                height: 300,
+                theme: 'light',
+            },
+            amino: {
+                width: 350,
+                height: 280,
+                theme: 'light',
+                bondThickness: 0.7,
+            },
+            nucleotide: {
+                width: 500,
+                height: 400,
+                theme: 'light',
+                bondThickness: 0.8,
+            },
+        },
+    });
+
+    const content = `# Biochemical Molecules
 
 ## Amino Acids
 
@@ -103,11 +105,45 @@ NCCc1ccc(O)c(O)c1
 \`\`\`smiles {"width": 450, "height": 350}
 NCCc1c[nH]c2ccc(O)cc12
 \`\`\`
-*Mood regulation neurotransmitter*
+*Mood regulation neurotransmitters*
 
 ### GABA
 \`\`\`smiles {"width": 300, "height": 200}
 NCCCC(=O)O
 \`\`\`
-*Inhibitory neurotransmitter*`
-}; 
+*Inhibitory neurotransmitter*`;
+
+    const renderedHTML = md.render(content);
+
+    return {
+        id: 'biochemistry',
+        name: 'Biochemistry',
+        description: 'Amino acids, nucleotides, and biomolecules',
+        options: {
+            renderAtParse: true,
+            smilesDrawerOptions: {
+                default: {
+                    width: 400,
+                    height: 300,
+                    theme: 'light',
+                },
+                amino: {
+                    width: 350,
+                    height: 280,
+                    theme: 'light',
+                    bondThickness: 0.7,
+                },
+                nucleotide: {
+                    width: 500,
+                    height: 400,
+                    theme: 'light',
+                    bondThickness: 0.8,
+                },
+            },
+        },
+        content: content,
+        renderedHTML: renderedHTML,
+        sourceCode: require('fs').readFileSync(__filename, 'utf8'),
+        timestamp: new Date().toISOString(),
+    };
+};

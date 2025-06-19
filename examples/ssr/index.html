@@ -4,272 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Server-Side Rendering - markdown-it-smiles</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f8f9fa;
-        }
-        
-        .header {
-            text-align: center;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 40px 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        .header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            font-weight: 700;
-        }
-        
-        .header p {
-            margin: 10px 0 0 0;
-            opacity: 0.9;
-            font-size: 1.1em;
-        }
-        
-        .breadcrumb {
-            margin-bottom: 30px;
-            font-size: 0.9em;
-        }
-        
-        .breadcrumb a {
-            color: #28a745;
-            text-decoration: none;
-        }
-        
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-        
-        .meta-info {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            border-left: 4px solid #28a745;
-        }
-        
-        .meta-info h3 {
-            margin-top: 0;
-            color: #28a745;
-        }
-        
-        .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .meta-item {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-        }
-        
-        .meta-item strong {
-            display: block;
-            color: #333;
-            font-size: 1.2em;
-        }
-        
-        .meta-item span {
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        .sample-section {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-        
-        .sample-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #28a745;
-        }
-        
-        .sample-header h2 {
-            margin: 0;
-            color: #333;
-            font-size: 1.8em;
-        }
-        
-        .sample-meta {
-            font-size: 0.9em;
-            color: #666;
-        }
-        
-        .sample-description {
-            background: #e8f5e8;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #28a745;
-        }
-        
-        .tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-radius: 8px 8px 0 0;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 0.9em;
-            font-weight: 600;
-            color: #666;
-            transition: all 0.3s ease;
-        }
-        
-        .tab.active {
-            background: white;
-            color: #28a745;
-            border-bottom: 2px solid #28a745;
-        }
-        
-        .tab:hover {
-            background: #e9ecef;
-        }
-        
-        .tab-content {
-            display: none;
-            background: white;
-            border-radius: 0 0 8px 8px;
-            border: 1px solid #ddd;
-            border-top: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .rendered-content {
-            padding: 20px;
-            min-height: 200px;
-        }
-        
-        .source-code {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.4;
-        }
-        
-        .markdown-source {
-            background: #f8f8f8;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.4;
-            white-space: pre-wrap;
-            border: 1px solid #ddd;
-        }
-        
-        .config-json {
-            background: #f8f8f8;
-            padding: 20px;
-            overflow-x: auto;
-            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.4;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-        
-        .feature {
-            background: #e8f5e8;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #28a745;
-        }
-        
-        .feature h4 {
-            margin-top: 0;
-            color: #28a745;
-            font-size: 1.1em;
-        }
-        
-        .feature p {
-            margin: 0;
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        @media (max-width: 768px) {
-            .sample-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .tabs {
-                flex-wrap: wrap;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-        }
-        
-        /* SMILES 渲染样式 */
-        .smiles-container {
-            margin: 10px 0;
-            text-align: center;
-        }
-        
-        .smiles-svg {
-            max-width: 100%;
-            height: auto;
-            border: 1px solid #e1e5e9;
-            border-radius: 4px;
-            background: white;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/default.min.css">
+    <link rel="stylesheet" href="index.css">
+
 </head>
 <body>
     <div class="breadcrumb">
@@ -304,17 +41,20 @@
         </div>
     </div>
 
-    <div id="meta-section" class="meta-info">
+    <div id="meta-section" class="meta-info" style="display: none;">
         <h3>📊 Generation Information</h3>
         <div class="loading">Loading generation metadata...</div>
     </div>
 
-    <div id="samples-container" class="loading">
-        <p>🔄 Loading server-side rendered examples...</p>
+    <div id="samples-container" class="main-content">
+        <div class="loading" style="width: 100%; text-align: center; padding: 60px;">
+            <p>🔄 Loading server-side rendered examples...</p>
+        </div>
     </div>
 
     <script>
         let samplesData = null;
+        let currentSampleId = null;
 
         // 加载 SSR 数据
         async function loadSSRData() {
@@ -329,7 +69,7 @@
             } catch (error) {
                 console.error('Error loading SSR data:', error);
                 document.getElementById('samples-container').innerHTML = `
-                    <div class="error">
+                    <div class="error" style="width: 100%; margin: 20px;">
                         <h3>❌ Error Loading Data</h3>
                         <p>Failed to load server-side rendered examples: ${error.message}</p>
                         <p>Make sure to run <code>npm run build</code> in the SSR directory first.</p>
@@ -367,14 +107,38 @@
                     ${meta.description}
                 </p>
             `;
+            metaSection.style.display = 'block';
         }
 
         // 渲染示例
         function renderSamples() {
             const container = document.getElementById('samples-container');
             
-            const samplesHTML = samplesData.samples.map(sample => `
-                <div class="sample-section">
+            if (!samplesData.samples || samplesData.samples.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Examples Available</h3>
+                        <p>No server-side rendered examples found.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 构建导航列表
+            const navItems = samplesData.samples.map((sample, index) => `
+                <li class="sample-nav-item">
+                    <button class="sample-nav-button ${index === 0 ? 'active' : ''}" 
+                            onclick="showSample('${sample.id}')" 
+                            id="nav-${sample.id}">
+                        <div>${sample.name}</div>
+                        <div class="sample-id">ID: ${sample.id}</div>
+                    </button>
+                </li>
+            `).join('');
+            
+            // 构建详细内容
+            const sampleDetails = samplesData.samples.map((sample, index) => `
+                <div id="detail-${sample.id}" class="sample-detail ${index === 0 ? 'active' : ''}">
                     <div class="sample-header">
                         <h2>${sample.name}</h2>
                         <div class="sample-meta">ID: ${sample.id}</div>
@@ -406,20 +170,52 @@
                     </div>
                     
                     <div id="${sample.id}-markdown" class="tab-content">
-                        <div class="markdown-source">${escapeHtml(sample.content)}</div>
+                        <pre><code class="language-markdown">${escapeHtml(sample.content)}</code></pre>
                     </div>
                     
                     <div id="${sample.id}-config" class="tab-content">
-                        <div class="config-json">${JSON.stringify(sample.options, null, 2)}</div>
+                        <pre><code class="language-json">${JSON.stringify(sample.options, null, 2)}</code></pre>
                     </div>
                     
                     <div id="${sample.id}-source" class="tab-content">
-                        <div class="source-code">${escapeHtml(sample.sourceCode)}</div>
+                        <pre><code class="language-javascript">${escapeHtml(sample.sourceCode)}</code></pre>
                     </div>
                 </div>
             `).join('');
             
-            container.innerHTML = samplesHTML;
+            container.innerHTML = `
+                <div class="sample-nav">
+                    <h3>📚 Examples</h3>
+                    <ul class="sample-nav-list">
+                        ${navItems}
+                    </ul>
+                </div>
+                <div class="sample-content">
+                    ${sampleDetails}
+                </div>
+            `;
+            
+            // 设置默认选中第一个示例
+            if (samplesData.samples.length > 0) {
+                currentSampleId = samplesData.samples[0].id;
+            }
+        }
+
+        // 显示指定的示例
+        function showSample(sampleId) {
+            // 更新导航按钮状态
+            document.querySelectorAll('.sample-nav-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`nav-${sampleId}`).classList.add('active');
+            
+            // 更新内容显示
+            document.querySelectorAll('.sample-detail').forEach(detail => {
+                detail.classList.remove('active');
+            });
+            document.getElementById(`detail-${sampleId}`).classList.add('active');
+            
+            currentSampleId = sampleId;
         }
 
         // 切换标签页
@@ -452,6 +248,14 @@
 
         // 页面加载时获取数据
         document.addEventListener('DOMContentLoaded', loadSSRData);
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/languages/javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/languages/json.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/languages/markdown.min.js"></script>
+    <script>
+        hljs.highlightAll();
     </script>
 </body>
 </html> 

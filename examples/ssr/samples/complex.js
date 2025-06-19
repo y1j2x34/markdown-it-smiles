@@ -1,24 +1,26 @@
-module.exports = {
-  name: 'Complex Molecules',
-  description: 'Pharmaceutical compounds and natural products',
-  options: {
-    renderAtParse: true,
-    smilesDrawerOptions: {
-      default: {
-        width: 500,
-        height: 400,
-        theme: 'light',
-        bondThickness: 0.8
-      },
-      large: {
-        width: 600,
-        height: 500,
-        theme: 'light',
-        bondThickness: 1.0
-      }
-    }
-  },
-  content: `# Complex Molecular Structures
+const markdownIt = require('markdown-it');
+const { MarkdownItSmiles } = require('markdown-it-smiles');
+
+module.exports = function generateComplexExample() {
+    const md = markdownIt().use(MarkdownItSmiles, {
+        renderAtParse: true,
+        smilesDrawerOptions: {
+            default: {
+                width: 500,
+                height: 400,
+                theme: 'light',
+                bondThickness: 0.8,
+            },
+            large: {
+                width: 600,
+                height: 500,
+                theme: 'light',
+                bondThickness: 1.0,
+            },
+        },
+    });
+
+    const content = `# Complex Molecular Structures
 
 ## Pharmaceutical Compounds
 
@@ -58,5 +60,34 @@ CN1CC[C@]23C4=C5C=CC(O)=C4O[C@H]2[C@@H](O)C=C[C@H]3[C@H]1C5
 \`\`\`smiles {"width": 600, "height": 400}
 C[C@H](CCCC(C)C)[C@H]1CC[C@@H]2[C@@H]3CC=C4C[C@@H](O)CC[C@]4(C)[C@H]3CC[C@]12C
 \`\`\`
-*Sterol - essential component of cell membranes*`
-}; 
+*Sterol - essential component of cell membranes*`;
+
+    const renderedHTML = md.render(content);
+
+    return {
+        id: 'complex',
+        name: 'Complex Molecules',
+        description: 'Pharmaceutical compounds and natural products',
+        options: {
+            renderAtParse: true,
+            smilesDrawerOptions: {
+                default: {
+                    width: 500,
+                    height: 400,
+                    theme: 'light',
+                    bondThickness: 0.8,
+                },
+                large: {
+                    width: 600,
+                    height: 500,
+                    theme: 'light',
+                    bondThickness: 1.0,
+                },
+            },
+        },
+        content: content,
+        renderedHTML: renderedHTML,
+        sourceCode: require('fs').readFileSync(__filename, 'utf8'),
+        timestamp: new Date().toISOString(),
+    };
+};

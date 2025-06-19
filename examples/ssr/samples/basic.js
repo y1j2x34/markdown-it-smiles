@@ -1,17 +1,19 @@
-module.exports = {
-  name: 'Basic Molecules',
-  description: 'Simple molecular structures with default settings',
-  options: {
-    renderAtParse: true,
-    smilesDrawerOptions: {
-      default: {
-        width: 400,
-        height: 300,
-        theme: 'light'
-      }
-    }
-  },
-  content: `# Basic Molecular Structures
+const markdownIt = require('markdown-it');
+const { MarkdownItSmiles } = require('markdown-it-smiles');
+
+module.exports = function generateBasicExample() {
+    const md = markdownIt().use(MarkdownItSmiles, {
+        renderAtParse: true,
+        smilesDrawerOptions: {
+            default: {
+                width: 400,
+                height: 300,
+                theme: 'light',
+            },
+        },
+    });
+
+    const content = `# Basic Molecular Structures
 
 ## Simple Molecules
 Water equivalent: $smiles{O}
@@ -34,5 +36,27 @@ C1CCCCC1
 \`\`\`smiles
 c1ccccc1
 \`\`\`
-*Benzene - aromatic ring*`
-}; 
+*Benzene - aromatic ring*`;
+
+    const renderedHTML = md.render(content);
+
+    return {
+        id: 'basic',
+        name: 'Basic Molecules',
+        description: 'Simple molecular structures with default settings',
+        options: {
+            renderAtParse: true,
+            smilesDrawerOptions: {
+                default: {
+                    width: 400,
+                    height: 300,
+                    theme: 'light',
+                },
+            },
+        },
+        content: content,
+        renderedHTML: renderedHTML,
+        sourceCode: require('fs').readFileSync(__filename, 'utf8'),
+        timestamp: new Date().toISOString(),
+    };
+};

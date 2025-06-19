@@ -4,11 +4,11 @@
     "description": "Server-side rendering examples for markdown-it-smiles",
     "main": "index.js",
     "scripts": {
-        "build": "node index.js",
-        "serve": "node -e \"console.log('Run: npm run build && open index.html')\""
+        "build:ssr": "node ssr/generate.js"
     },
     "dependencies": {
-        "markdown-it": "^14.0.0"
+        "markdown-it": "^14.0.0",
+        "markdown-it-smiles": "link:../"
     },
     "author": "",
     "license": "MIT"
