@@ -89,7 +89,8 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
             return smilesDrawerScript();
         };
 
-        const script = options.smilesDrawerScript ?? 'https://cdn.jsdelivr.net/npm/smiles-drawer/dist/smiles-drawer.min.js';
+        const script =
+            options.smilesDrawerScript ?? 'https://cdn.jsdelivr.net/npm/smiles-drawer/dist/smiles-drawer.min.js';
         // Styles for SMILES blocks and inline elements
         const styles = `
             <style>
@@ -131,11 +132,11 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
         `.replace(/ {16}/g, '');
 
         const scriptTag = (() => {
-            if(isBrowser() || script) {
+            if (isBrowser() || script) {
                 return script ? `<script src="${script}"></script>` : '';
             }
             return `<script>${scriptContent()}</script>`;
-        })()
+        })();
 
         // Scripts for smiles-drawer (external or inline) and auto-apply
         const scripts = options.renderAtParse

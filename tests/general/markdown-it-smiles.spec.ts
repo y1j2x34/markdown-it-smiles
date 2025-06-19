@@ -66,9 +66,9 @@ CC(=O)O
                     default: {
                         theme: 'dark',
                         width: 300,
-                        height: 300
-                    }
-                }
+                        height: 300,
+                    },
+                },
             });
             const result = md.render('$smiles{CCO}');
             expect(result).toContain('width="300"');
@@ -79,8 +79,8 @@ CC(=O)O
             md.use(MarkdownItSmiles, {
                 smileDrawerOptions: {
                     inline: { width: 100 },
-                    block: { width: 500 }
-                }
+                    block: { width: 500 },
+                },
             });
             const inline = md.render('$smiles{CCO}');
             const block = md.render('```smiles\nCCO\n```');
@@ -97,8 +97,8 @@ CC(=O)O
                     renderAtParse: true,
                     errorHandling: {
                         onError: errorHandler,
-                        fallbackImage: 'error.png'
-                    }
+                        fallbackImage: 'error.png',
+                    },
                 });
 
                 const result = md.render('$smiles{InvalidSMILES}');
@@ -133,7 +133,7 @@ CC(=O)O
 
         it('should use external script if provided', () => {
             md.use(MarkdownItSmiles, {
-                smileDrawerScript: 'https://cdn.example.com/smiles-drawer.js'
+                smileDrawerScript: 'https://cdn.example.com/smiles-drawer.js',
             });
             const result = md.render('$smiles{CCO}');
 
@@ -153,7 +153,7 @@ CC(=O)O
                 // Aspirin
                 'CC(=O)OC1=CC=CC=C1C(=O)O',
                 // Glucose
-                'C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O'
+                'C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O',
             ];
 
             examples.forEach(smiles => {
@@ -169,7 +169,7 @@ CC(=O)O
                 // Pyridine
                 'c1ccncc1',
                 // Furan
-                'c1ccoc1'
+                'c1ccoc1',
             ];
 
             examples.forEach(smiles => {

@@ -1,6 +1,6 @@
 // Client-side rendering script for SMILES structures
 export function getClientScript() {
-  return `
+    return `
 <script>
 (function() {
   function renderSmiles() {
@@ -76,57 +76,59 @@ export function getClientScript() {
 
 // Extract the core rendering logic for testing
 export function createSmilesRenderer() {
-  return {
-    // Default rendering options
-    getDefaultOptions: function(canvas) {
-      return {
-        width: canvas.width,
-        height: canvas.height,
-        bondThickness: 0.6,
-        bondLength: 15,
-        atomVisualization: 'default',
-        isomeric: true,
-        terminalCarbons: false,
-        explicitHydrogens: false,
-        compactDrawing: true,
-        fontSizeLarge: 5,
-        fontSizeSmall: 3,
-        padding: 20.0
-      };
-    },
-    
-    // Render SMILES on a canvas element
-    renderOnCanvas: function(canvas, smiles, options = {}) {
-      const defaultOptions = this.getDefaultOptions(canvas);
-      const finalOptions = Object.assign(defaultOptions, options);
-      
-      return new Promise((resolve, reject) => {
-        if (typeof SmilesDrawer === 'undefined') {
-          reject(new Error('SmilesDrawer not loaded'));
-          return;
-        }
-        
-        const drawer = new SmilesDrawer.Drawer(finalOptions);
-        
-        SmilesDrawer.parse(smiles, function(tree) {
-          try {
-            drawer.draw(tree, canvas.id, 'light', false);
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
-        }, function(err) {
-          reject(new Error('SMILES parsing error: ' + err));
-        });
-      });
-    },
-    
-    // Render error message on canvas
-    renderError: function(canvas, message) {
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#ff0000';
-      ctx.font = '12px Arial';
-      ctx.fillText(message, 10, 20);
-    }
-  };
-} 
+    return {
+        // Default rendering options
+        getDefaultOptions: function (canvas) {
+            return {
+                width: canvas.width,
+                height: canvas.height,
+                bondThickness: 0.6,
+                bondLength: 15,
+                atomVisualization: 'default',
+                isomeric: true,
+                terminalCarbons: false,
+                explicitHydrogens: false,
+                compactDrawing: true,
+                fontSizeLarge: 5,
+                fontSizeSmall: 3,
+                padding: 20.0,
+            };
+        },
+        // Render SMILES on a canvas element
+        renderOnCanvas: function (canvas, smiles, options = {}) {
+            const defaultOptions = this.getDefaultOptions(canvas);
+            const finalOptions = Object.assign(defaultOptions, options);
+
+            return new Promise((resolve, reject) => {
+                if (typeof SmilesDrawer === 'undefined') {
+                    reject(new Error('SmilesDrawer not loaded'));
+                    return;
+                }
+
+                const drawer = new SmilesDrawer.Drawer(finalOptions);
+
+                SmilesDrawer.parse(
+                    smiles,
+                    function (tree) {
+                        try {
+                            drawer.draw(tree, canvas.id, 'light', false);
+                            resolve();
+                        } catch (err) {
+                            reject(err);
+                        }
+                    },
+                    function (err) {
+                        reject(new Error('SMILES parsing error: ' + err));
+                    }
+                );
+            });
+        },
+        // Render error message on canvas
+        renderError: function (canvas, message) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ff0000';
+            ctx.font = '12px Arial';
+            ctx.fillText(message, 10, 20);
+        },
+    };
+}

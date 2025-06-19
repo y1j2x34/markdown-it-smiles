@@ -1,6 +1,6 @@
 // CSS styles for SMILES rendering
 export function getCSS() {
-  return `
+    return `
 <style>
 .smiles-container {
   margin: 1em 0;
@@ -28,4 +28,4 @@ export function getCSS() {
   }
 }
 </style>`;
-} 
+}

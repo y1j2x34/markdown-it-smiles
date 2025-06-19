@@ -22,8 +22,7 @@
         "src",
         "tests",
         "dev",
-        "jest.config.ts",
-        "jest.setup.ts",
+        "vitest.config.ts",
         "tsup.config.ts"
     ]
 }

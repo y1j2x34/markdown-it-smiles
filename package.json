@@ -1,6 +1,6 @@
 {
     "name": "markdown-it-smiles",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "A markdown-it plugin for rendering SMILES (Simplified Molecular Input Line Entry System) chemical structures",
     "homepage": "https://github.com/y1j2x34/markdown-it-smiles#readme",
     "bugs": {
@@ -46,20 +46,8 @@
     "module": "./dist/node/esm/index.js",
     "browser": "./dist/browser/esm/index.js",
     "types": "./dist/node/index.d.ts",
-    "keywords": [
-        "markdown-it",
-        "plugin",
-        "smiles",
-        "chemistry",
-        "molecular",
-        "structure",
-        "chemical"
-    ],
-    "files": [
-        "dist",
-        "CHANGELOG.md",
-        "README.md"
-    ],
+    "keywords": ["markdown-it", "plugin", "smiles", "chemistry", "molecular", "structure", "chemical"],
+    "files": ["dist", "CHANGELOG.md", "README.md"],
     "scripts": {
         "build": "tsup",
         "build:watch": "tsup --watch",
@@ -68,6 +56,7 @@
         "debug": "nodemon --watch dist --watch debug.js --exec 'node ./debug.js'",
         "debug:inspect": "nodemon --watch dist --watch debug.js --exec 'node --inspect-brk ./debug.js'",
         "lint": "eslint . -c ./.eslintrc.cjs",
+        "format": "eslint . -c ./.eslintrc.cjs --fix",
         "prepare": "husky install",
         "test": "vitest ",
         "test:debug": "vitest --inspect --no-file-parallelism --project node",

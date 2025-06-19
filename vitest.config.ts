@@ -10,11 +10,11 @@ export default defineConfig({
                     environment: 'node',
                     setupFiles: ['tests/node/setup.ts'],
                     env: {
-                        IS_BROWSER: 'false'
+                        IS_BROWSER: 'false',
                     },
                 },
                 define: {
-                    'IS_BROWSER': 'false'
+                    IS_BROWSER: 'false',
                 },
             },
             {
@@ -26,24 +26,27 @@ export default defineConfig({
                         provider: 'playwright',
                         instances: [
                             {
-                                browser: 'chromium'
-                            }, {
-                                browser: 'firefox'
-                            }, {
-                                browser: 'webkit'
-                            }
-                        ]
-                    }
+                                browser: 'chromium',
+                            },
+                            {
+                                browser: 'firefox',
+                            },
+                            {
+                                browser: 'webkit',
+                            },
+                        ],
+                    },
                 },
                 define: {
-                    IS_BROWSER: 'true'
-                }
-            }],
+                    IS_BROWSER: 'true',
+                },
+            },
+        ],
         coverage: {
             provider: 'istanbul',
             reporter: ['html', 'text-summary', 'cobertura'],
             include: ['src/**/*.ts'],
             reportsDirectory: 'report/coverage',
-        }
-    }
+        },
+    },
 });

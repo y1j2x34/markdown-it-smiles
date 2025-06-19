@@ -10,11 +10,11 @@ md.use(MarkdownItSmiles, {
     format: 'img',
     renderAtParse: true,
     errorHandling: {
-        onError: (err) => {
+        onError: err => {
             console.error('error', err.message);
         },
         // fallbackImage: 'error.png'
-    }
+    },
 });
 try {
     const html = md.render(`# Hello World
