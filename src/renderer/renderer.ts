@@ -190,7 +190,8 @@ function createRendererWrapper(
             .map(([key, value]) => `${key}:${value}`)
             .join(';');
 
-        return `<div class="${className}" style="${style}">${html}</div>`;
+        const tagName = optionType === 'inline' ? 'span' : 'div';
+        return `<${tagName} class="${className}" style="${style}">${html}</${tagName}>`;
     };
 }
 
