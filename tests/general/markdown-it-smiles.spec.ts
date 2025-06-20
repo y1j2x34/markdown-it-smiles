@@ -62,7 +62,7 @@ CC(=O)O
 
         it('should apply custom SmileDrawer options', () => {
             md.use(MarkdownItSmiles, {
-                smileDrawerOptions: {
+                smilesDrawerOptions: {
                     default: {
                         theme: 'dark',
                         width: 300,
@@ -77,7 +77,7 @@ CC(=O)O
 
         it('should apply different options for block and inline', () => {
             md.use(MarkdownItSmiles, {
-                smileDrawerOptions: {
+                smilesDrawerOptions: {
                     inline: { width: 100 },
                     block: { width: 500 },
                 },
@@ -133,7 +133,7 @@ CC(=O)O
 
         it('should use external script if provided', () => {
             md.use(MarkdownItSmiles, {
-                smileDrawerScript: 'https://cdn.example.com/smiles-drawer.js',
+                smilesDrawerScript: 'https://cdn.example.com/smiles-drawer.js',
             });
             const result = md.render('$smiles{CCO}');
 
