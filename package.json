@@ -62,8 +62,7 @@
         "test:debug": "vitest --inspect --no-file-parallelism --project node",
         "test:ci": "vitest run --browser.headless --coverage ",
         "tsc": "tsc --noEmit",
-        "typedoc": "typedoc ./src  --out ./docs/api --hideGenerator --name ts-library",
-        "postinstall": "cd node_modules/canvas && npm run install"
+        "typedoc": "typedoc ./src  --out ./docs/api --hideGenerator --name ts-library"
     },
     "lint-staged": {
         "**/*{ts,tsx,json,js,cjs,jsx}": "npx prettier --write"
@@ -102,7 +101,6 @@
         "whatwg-fetch": "^3.6.20"
     },
     "dependencies": {
-        "canvas": "^3.1.0",
         "deasync": "^0.1.30",
         "jsdom": "^26.1.0",
         "json5": "^2.2.3",
