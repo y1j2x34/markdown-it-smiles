@@ -32,7 +32,7 @@ npm install markdown-it-smiles
 
 ## Usage
 
-### Basic Setup (Node.js)
+### Basic Setup
 
 ```javascript
 import MarkdownIt from 'markdown-it';
@@ -51,7 +51,7 @@ The molecule $smiles{CCO} is ethanol.
 `);
 ```
 
-### Advanced Configuration (Node.js)
+### Advanced Configuration
 
 ```javascript
 import MarkdownIt from 'markdown-it';
@@ -99,7 +99,7 @@ const md = new MarkdownIt().use(MarkdownItSmiles, {
     <title>SMILES Demo</title>
 </head>
 <body>
-    <div id="content"></div>
+    <iframe id="content"></iframe>
     
     <script type="module">
         import MarkdownIt from 'https://esm.sh/markdown-it@14';
@@ -121,7 +121,7 @@ c1ccccc1
 \`\`\`
         `);
         
-        document.getElementById('content').innerHTML = html;
+        document.getElementById('content').srcdoc = html;
     </script>
 </body>
 </html>
