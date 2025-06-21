@@ -366,7 +366,7 @@ CC(C)CCCC(C)C1CCC2C1(CCC3C2CC=C4C3(CCC(C4)O)C)C
 
 ## SMILES Notation
 
-SMILES (Simplified Molecular Input Line Entry System) is a specification for describing chemical molecule structures using ASCII strings:
+SMILES (Simplified molecular input line entry specification) is a specification for describing chemical molecule structures using ASCII strings:
 
 **Basic Examples:**
 - `C` - Methane

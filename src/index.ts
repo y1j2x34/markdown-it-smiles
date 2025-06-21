@@ -1,7 +1,7 @@
 /**
  * markdown-it-smiles plugin
  *
- * This module provides a Markdown-it plugin for rendering SMILES (Simplified Molecular Input Line Entry System)
+ * This module provides a Markdown-it plugin for rendering SMILES (Simplified molecular input line entry specification)
  * strings as chemical structure diagrams. It supports both block and inline SMILES, and can render as SVG or
  * image using the smiles-drawer library.
  *
