@@ -16,12 +16,18 @@
         "strict": true,
         "noImplicitAny": true,
         "noFallthroughCasesInSwitch": true,
-        "noUncheckedIndexedAccess": true
+        "noUncheckedIndexedAccess": true,
+        "paths": {
+            "markdown-it-smiles": ["./src/index.ts"],
+            "markdown-it-smiles/*": ["./src/*"],
+            "markdown-it-smiles-runtime": ["./dist/browser/esm/index.js"]
+        }
     },
     "include": [
         "src",
         "tests",
         "dev",
+        "examples/**/*.ts",
         "vitest.config.ts",
         "tsup.config.ts"
     ]

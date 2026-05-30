@@ -446,6 +446,21 @@ const { MarkdownItSmiles } = require('markdown-it-smiles');
 - [sharp](https://github.com/lovell/sharp) ^0.34.2  
 - [deasync](https://github.com/abbr/deasync) ^0.1.30
 
+## Local Development
+
+```bash
+pnpm install
+pnpm dev
+```
+
+The `pnpm dev` command runs the library build in watch mode and simultaneously starts a Vite dev server for the examples under `examples/`. After the initial build finishes, open [http://localhost:5173](http://localhost:5173) to explore:
+
+1. `index.html` (static showcase rendered via `examples/main.ts`)
+2. `interactive-demo.html` (live editor powered by `interactive-demo.ts`)
+3. `client-rendering.html` (fully client-rendered walkthrough)
+
+Any changes to the plugin source or the example scripts trigger automatic rebuilds and hot reloads in the browser.
+
 ## Contributing
 
 1. Fork the repository
