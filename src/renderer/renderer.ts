@@ -1,9 +1,12 @@
 import type { Token } from 'markdown-it/index.js';
 import { extend } from '../utils/extends';
-import { PluginContext, PluginOptions, SmilesDrawerOptions } from '../plugin-options';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import SmilesDrawer from 'smiles-drawer';
+import {
+    PluginContext,
+    PluginOptions,
+    SmilesDrawerOptions,
+    SmilesDrawerLoaderResult,
+} from '../plugin-options';
+import DefaultSmilesDrawer from 'smiles-drawer';
 import { isBrowser } from '../utils/isBrowser';
 
 function generateRenderer(options: PluginOptions, context: PluginContext) {
@@ -94,7 +97,8 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         Object.assign(globalThis, exportedGlobalVariables);
         try {
             let error: Error | undefined;
-            SmilesDrawer.SmiDrawer.apply(undefined, undefined, undefined, undefined, null, (err: Error) => {
+            const smilesDrawer = resolveSmilesDrawer(options, context);
+            smilesDrawer.SmiDrawer.apply(undefined, undefined, undefined, undefined, null, (err: Error) => {
                 error = err;
                 options.errorHandling?.onError?.(err);
             });
@@ -154,6 +158,73 @@ function determineRenderTag(format: string, options: PluginOptions) {
             throw new Error(`Invalid format: ${format}, only 'svg' and 'img' are supported`);
     }
     return format;
+}
+
+function resolveSmilesDrawer(options: PluginOptions, context: PluginContext): SmilesDrawerLoaderResult {
+    if (context.smilesDrawerModule) {
+        return context.smilesDrawerModule;
+    }
+
+    const normalize = (module: unknown): SmilesDrawerLoaderResult => {
+        if (!module) {
+            throw new Error('Failed to resolve SmilesDrawer: loader returned an empty value');
+        }
+
+        const candidate = module as SmilesDrawerLoaderResult & { default?: unknown };
+
+        if (candidate.SmiDrawer) {
+            return candidate;
+        }
+
+        if (candidate.default) {
+            return normalize(candidate.default);
+        }
+
+        throw new Error('Failed to resolve SmilesDrawer: module does not expose SmiDrawer');
+    };
+
+    const assignModule = (module: SmilesDrawerLoaderResult) => {
+        context.smilesDrawerModule = module;
+        return module;
+    };
+
+    if (options.loadSmilesDrawer) {
+        const maybeModule = options.loadSmilesDrawer();
+
+        if (maybeModule && typeof (maybeModule as Promise<unknown>).then === 'function') {
+            if (isBrowser()) {
+                throw new Error('loadSmilesDrawer cannot return a Promise in browser render-at-parse mode');
+            }
+
+            let resolved: SmilesDrawerLoaderResult | undefined;
+            let rejection: unknown;
+
+            (maybeModule as Promise<SmilesDrawerLoaderResult>)
+                .then(module => {
+                    resolved = normalize(module);
+                })
+                .catch(error => {
+                    rejection = error;
+                });
+
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const deasync = require('deasync');
+
+            while (!resolved && !rejection) {
+                deasync.sleep(25);
+            }
+
+            if (rejection) {
+                throw rejection;
+            }
+
+            return assignModule(resolved!);
+        }
+
+        return assignModule(normalize(maybeModule));
+    }
+
+    return assignModule(normalize(DefaultSmilesDrawer));
 }
 
 function createRendererWrapper(

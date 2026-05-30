@@ -95,6 +95,8 @@ export interface SmilesDrawerOptions {
  * Options for configuring the markdown-it-smiles plugin.
  * These options extend the core SmilesDrawer options for integration with markdown-it.
  */
+export type SmilesDrawerLoaderResult = typeof import('smiles-drawer');
+
 export interface PluginOptions {
     /**
      * URL to a custom font to use for rendering.
@@ -138,6 +140,13 @@ export interface PluginOptions {
         /** Fallback image URL or data URI if rendering fails */
         fallbackImage?: string;
     };
+    /**
+     * Optional loader used to resolve the SmilesDrawer module in environments where the
+     * CDN script tag is not desirable (e.g. bundler or SSR contexts).
+     * When running in a browser, the plugin will automatically register the loader on a
+     * shared namespace so that the injected runtime script can reuse it.
+     */
+    loadSmilesDrawer?: () => Promise<SmilesDrawerLoaderResult> | SmilesDrawerLoaderResult;
 }
 
 /**
@@ -146,4 +155,6 @@ export interface PluginOptions {
 export interface PluginContext {
     /** Whether the document contains any SMILES blocks */
     hasSmiles: boolean;
+    /** Cached SmilesDrawer module for render-at-parse in Node environments */
+    smilesDrawerModule?: SmilesDrawerLoaderResult;
 }

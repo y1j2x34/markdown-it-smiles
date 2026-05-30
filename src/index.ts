@@ -40,6 +40,173 @@ const smilesDrawerScript = (() => {
     };
 })();
 
+function createRuntimeBootstrap(): string {
+    return `
+<script>
+(function (global) {
+    var namespaceKey = "__markdownItSmiles";
+    var namespace = global[namespaceKey] = global[namespaceKey] || {};
+
+    function normalize(module) {
+        if (!module) {
+            return null;
+        }
+        if (module.SmiDrawer) {
+            return module;
+        }
+        if (module.default) {
+            return normalize(module.default);
+        }
+        return null;
+    }
+
+    function ensureModule() {
+        if (namespace.modulePromise) {
+            return namespace.modulePromise;
+        }
+        if (namespace.module) {
+            return Promise.resolve(namespace.module);
+        }
+        if (typeof namespace.loadSmilesDrawer === 'function') {
+            try {
+                var result = namespace.loadSmilesDrawer();
+                namespace.modulePromise = Promise.resolve(result).then(function (mod) {
+                    var normalized = normalize(mod);
+                    if (!normalized) {
+                        throw new Error('loadSmilesDrawer() did not return a SmilesDrawer export.');
+                    }
+                    namespace.module = normalized;
+                    return normalized;
+                });
+            } catch (error) {
+                namespace.modulePromise = Promise.reject(error);
+            }
+            return namespace.modulePromise;
+        }
+        if (global.SmilesDrawer) {
+            var normalized = normalize(global.SmilesDrawer);
+            if (!normalized) {
+                return Promise.reject(new Error('Global SmilesDrawer instance is invalid.'));
+            }
+            namespace.module = normalized;
+            return Promise.resolve(normalized);
+        }
+        if (!namespace.scriptPromise) {
+            namespace.scriptPromise = new Promise(function (resolve, reject) {
+                var scripts = document.querySelectorAll('script[src]');
+                var target = null;
+                for (var i = 0; i < scripts.length; i++) {
+                    var node = scripts[i];
+                    if (/smiles-drawer/i.test(node.src)) {
+                        target = node;
+                        break;
+                    }
+                }
+                if (!target) {
+                    reject(new Error('No smiles-drawer script tag found. Provide a loader or set smilesDrawerScript.'));
+                    return;
+                }
+                var cleanup = function () {
+                    target.removeEventListener('load', onLoad);
+                    target.removeEventListener('error', onError);
+                };
+                var onLoad = function () {
+                    cleanup();
+                    if (global.SmilesDrawer) {
+                        try {
+                            var normalized = normalize(global.SmilesDrawer);
+                            if (!normalized) {
+                                reject(new Error('smiles-drawer script loaded but SmiDrawer export was not found.'));
+                                return;
+                            }
+                            namespace.module = normalized;
+                            resolve(normalized);
+                        } catch (err) {
+                            reject(err);
+                        }
+                    } else {
+                        reject(new Error('smiles-drawer script loaded but global was undefined.'));
+                    }
+                };
+                var onError = function () {
+                    cleanup();
+                    reject(new Error('Failed to load smiles-drawer script.'));
+                };
+                target.addEventListener('load', onLoad);
+                target.addEventListener('error', onError);
+            });
+        }
+        return namespace.scriptPromise;
+    }
+
+    function scheduleRender() {
+        if (namespace.__scheduled) {
+            return;
+        }
+        namespace.__scheduled = true;
+        var scheduler = global.requestAnimationFrame || function (cb) {
+            return setTimeout(cb, 16);
+        };
+        scheduler(function () {
+            namespace.__scheduled = false;
+            ensureModule()
+                .then(function (mod) {
+                    var normalized = normalize(mod);
+                    if (!normalized || !normalized.SmiDrawer || typeof normalized.SmiDrawer.apply !== 'function') {
+                        throw new Error('Resolved SmilesDrawer module does not expose SmiDrawer.apply.');
+                    }
+                    var onError = typeof namespace.onError === 'function' ? namespace.onError : null;
+                    normalized.SmiDrawer.apply(undefined, undefined, undefined, undefined, null, onError);
+                })
+                .catch(function (error) {
+                    console.error('[markdown-it-smiles]', error);
+                });
+        });
+    }
+
+    function shouldTrigger(node) {
+        if (!node || node.nodeType !== 1) {
+            return false;
+        }
+        if (node.matches && node.matches('[data-smiles]')) {
+            return true;
+        }
+        if (node.querySelector && node.querySelector('[data-smiles]')) {
+            return true;
+        }
+        return false;
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', scheduleRender, { once: true });
+    } else {
+        scheduleRender();
+    }
+
+    if (typeof MutationObserver !== 'undefined') {
+        if (!namespace.__observer) {
+            namespace.__observer = new MutationObserver(function (mutations) {
+                for (var i = 0; i < mutations.length; i++) {
+                    var mutation = mutations[i];
+                    if (!mutation.addedNodes) {
+                        continue;
+                    }
+                    for (var j = 0; j < mutation.addedNodes.length; j++) {
+                        if (shouldTrigger(mutation.addedNodes[j])) {
+                            scheduleRender();
+                            return;
+                        }
+                    }
+                }
+            });
+            namespace.__observer.observe(document.documentElement, { childList: true, subtree: true });
+        }
+    }
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+`.replace(/ {4}/g, '');
+}
+
 /**
  * MarkdownItSmiles plugin function for Markdown-it.
  *
@@ -68,6 +235,21 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
         hasSmiles: false,
     };
 
+    if (isBrowser()) {
+        const globalScope = globalThis as Record<string, unknown>;
+        const namespaceKey = '__markdownItSmiles';
+        const namespace = (globalScope[namespaceKey] as Record<string, unknown> | undefined) ?? {};
+        if (!globalScope[namespaceKey]) {
+            globalScope[namespaceKey] = namespace;
+        }
+        if (options.loadSmilesDrawer) {
+            namespace['loadSmilesDrawer'] = options.loadSmilesDrawer;
+        }
+        if (options.errorHandling?.onError) {
+            namespace['onError'] = options.errorHandling.onError;
+        }
+    }
+
     // Register custom renderers for block and inline SMILES
     md.renderer.rules.smiles_block = generateBlockRenderer(options, context);
     md.renderer.rules.smiles_inline = generateInlineRenderer(options, context);
@@ -75,8 +257,11 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
     // Patch the render method to inject scripts and styles if SMILES are present
     const oritinalRender = md.render;
     md.render = (src, env) => {
+        context.hasSmiles = false;
         const html = oritinalRender.call(md, src, env);
-        if (!context.hasSmiles) {
+        const hasSmiles = context.hasSmiles;
+        context.hasSmiles = false;
+        if (!hasSmiles) {
             return html;
         }
 
@@ -143,14 +328,7 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
         // Scripts for smiles-drawer (external or inline) and auto-apply
         const scripts = options.renderAtParse
             ? ''
-            : `
-            ${scriptTag}
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    SmiDrawer.apply();
-                })
-            </script>
-        `.replace(/ {4}/g, '');
+            : [`${scriptTag}`, createRuntimeBootstrap()].filter(Boolean).join('');
         return html + scripts + styles;
     };
 }

@@ -128,7 +128,8 @@ CC(=O)O
 
             expect(result).toContain('<style>');
             expect(result).toContain('<script>');
-            expect(result).toContain('SmiDrawer.apply()');
+            expect(result).toContain('__markdownItSmiles');
+            expect(result).toContain('SmiDrawer.apply');
         });
 
         it('should use external script if provided', () => {

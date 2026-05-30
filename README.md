@@ -2,7 +2,6 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/d7d1c7f439d94a90b6ba459a7c63bc93)](https://app.codacy.com/gh/y1j2x34/markdown-it-smiles/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade) [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/d7d1c7f439d94a90b6ba459a7c63bc93)](https://app.codacy.com/gh/y1j2x34/markdown-it-smiles/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
-
 A [markdown-it](https://github.com/markdown-it/markdown-it) plugin for rendering chemical structures from SMILES notation using [smilesDrawer](https://github.com/reymond-group/smilesDrawer).
 
 ## 🌐 Live Demo
@@ -86,7 +85,10 @@ const md = new MarkdownIt().use(MarkdownItSmiles, {
   errorHandling: {
     onError: (err) => console.error('SMILES error:', err),
     fallbackImage: '/images/error-molecule.png'
-  }
+  },
+
+  // Provide your own smiles-drawer loader (optional)
+  loadSmilesDrawer: () => import('smiles-drawer')
 });
 ```
 
@@ -221,6 +223,7 @@ Large inline molecule: $smiles{CN1C=NC2=C1C(=O)N(C(=O)N2C)C}{width: 200, height:
 | `format` | string | `'svg'` | Output format: 'svg' or 'img' |
 | `fontUrl` | string | - | Custom font URL for rendering |
 | `smilesDrawerScript` | string | CDN URL | Custom smiles-drawer script URL |
+| `loadSmilesDrawer` | function | - | Custom loader returning a SmilesDrawer module |
 | `smilesDrawerOptions` | object | `{}` | SmilesDrawer configuration |
 | `errorHandling` | object | - | Error handling options (renderAtParse only) |
 
@@ -369,6 +372,7 @@ CC(C)CCCC(C)C1CCC2C1(CCC3C2CC=C4C3(CCC(C4)O)C)C
 SMILES (Simplified molecular input line entry specification) is a specification for describing chemical molecule structures using ASCII strings:
 
 **Basic Examples:**
+
 - `C` - Methane
 - `CC` - Ethane  
 - `CCO` - Ethanol
@@ -376,11 +380,13 @@ SMILES (Simplified molecular input line entry specification) is a specification 
 - `C#N` - Hydrogen cyanide
 
 **Ring Structures:**
+
 - `C1CCCCC1` - Cyclohexane
 - `c1ccccc1` - Benzene (aromatic)
 - `c1ccncc1` - Pyridine
 
 **Complex Molecules:**
+
 - `CC(=O)O` - Acetic acid
 - `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` - Caffeine
 - `CC(C)CC1=CC=C(C=C1)C(C)C(=O)O` - Ibuprofen
@@ -429,15 +435,16 @@ const { MarkdownItSmiles } = require('markdown-it-smiles');
 ## Dependencies
 
 ### Core Dependencies
+
 - [markdown-it](https://github.com/markdown-it/markdown-it) ^14.0.0
 - [smiles-drawer](https://github.com/reymond-group/smilesDrawer) ^2.1.7
 - [json5](https://github.com/json5/json5) ^2.2.3
 
 ### Node.js Dependencies (for renderAtParse)
+
 - [jsdom](https://github.com/jsdom/jsdom) ^26.1.0
 - [sharp](https://github.com/lovell/sharp) ^0.34.2  
 - [deasync](https://github.com/abbr/deasync) ^0.1.30
-
 
 ## Contributing
 
