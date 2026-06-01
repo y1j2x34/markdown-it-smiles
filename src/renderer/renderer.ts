@@ -8,6 +8,7 @@ import {
 } from '../plugin-options';
 import DefaultSmilesDrawer from 'smiles-drawer';
 import { isBrowser } from '../utils/isBrowser';
+import { normalizeSmilesDrawerOptions } from '../utils/cssUnits';
 
 function generateRenderer(options: PluginOptions, context: PluginContext) {
     return function render(tokens: Token[], idx: number, smilesOptions: Partial<SmilesDrawerOptions>): string {
@@ -239,30 +240,28 @@ function createRendererWrapper(
         if (!token) {
             return '';
         }
-        const blockOptions: SmilesDrawerOptions = token.info ? JSON.parse(token.info) : {};
-        const smilesOptions: Partial<SmilesDrawerOptions> = extend(
+        const blockOptions: Partial<SmilesDrawerOptions> = token.info ? JSON.parse(token.info) : {};
+        const mergedOptions = extend(
             {},
             options.smilesDrawerOptions?.default,
             options.smilesDrawerOptions?.[optionType],
             blockOptions as Record<string, unknown>
+        ) as Partial<SmilesDrawerOptions>;
+        const { normalizedOptions, cssLengths } = normalizeSmilesDrawerOptions(
+            mergedOptions,
+            options.cssUnitContext
         );
-        const html = render(tokens, idx, smilesOptions);
-        const attrs: Record<string, string> = {};
-        const { width, height } = smilesOptions;
+        const html = render(tokens, idx, normalizedOptions);
 
-        if (typeof width === 'number') {
-            attrs.width = `${width}px`;
-        }
-        if (typeof height === 'number') {
-            attrs.height = `${height}px`;
-        }
-
-        const style = Object.entries(attrs)
+        const style = Object.entries(cssLengths)
+            .filter(([, value]) => Boolean(value))
             .map(([key, value]) => `${key}:${value}`)
             .join(';');
 
+        const styleAttr = style.length > 0 ? ` style="${style}"` : '';
+
         const tagName = optionType === 'inline' ? 'span' : 'div';
-        return `<${tagName} class="${className}" style="${style}">${html}</${tagName}>`;
+        return `<${tagName} class="${className}"${styleAttr}>${html}</${tagName}>`;
     };
 }
 

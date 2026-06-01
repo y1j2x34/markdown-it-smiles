@@ -13,15 +13,15 @@ const demos: Demo[] = [
     },
     {
         id: 'demo2',
-        content: '```smiles {"width": 400, "height": 300, "bondThickness": 1.2}\nC1CCCCC1\n```',
+        content: '```smiles {"width": "18rem", "height": "14rem", "bondThickness": "1.5px"}\nC1CCCCC1\n```',
     },
     {
         id: 'demo3',
-        content: '```smiles {"width": 500, "height": 350, "theme": "dark"}\nCC(C)(C)c1ccc(O)cc1\n```',
+        content: '```smiles {"width": "22rem", "height": "16rem", "padding": "1.5em", "theme": "dark"}\nCC(C)(C)c1ccc(O)cc1\n```',
     },
     {
         id: 'demo4',
-        content: '```smiles {"width": 300, "height": 250, "bondLength": 20, "atomVisualization": "balls"}\nc1ccccc1\n```',
+        content: '```smiles {"width": "12rem", "height": "10rem", "bondLength": "24px", "atomVisualization": "balls"}\nc1ccccc1\n```',
     },
     {
         id: 'demo5',
@@ -29,7 +29,8 @@ const demos: Demo[] = [
     },
     {
         id: 'demo6',
-        content: 'Caffeine $smiles{CN1C=NC2=C1C(=O)N(C(=O)N2C)C}{"width": 100, "height": 80} is a stimulant found in coffee.',
+        content:
+            'Caffeine $smiles{CN1C=NC2=C1C(=O)N(C(=O)N2C)C}{"width": "6rem", "height": "4.5rem"} is a stimulant found in coffee.',
     },
     {
         id: 'demo7',
@@ -39,7 +40,7 @@ const demos: Demo[] = [
 The simplest alcohol is $smiles{CO} (methanol), followed by $smiles{CCO} (ethanol).
 
 ## Aromatic Compounds
-\`\`\`smiles {"width": 350, "height": 280}
+\`\`\`smiles {"width": "20rem", "height": "16rem"}
 c1ccccc1
 \`\`\`
 

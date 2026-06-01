@@ -1,4 +1,21 @@
 /**
+ * CSS length value that can be provided as either a number (interpreted as the
+ * base unit used by SmilesDrawer) or a CSS length string (px, rem, em, pt).
+ */
+export type CssLengthValue = number | string;
+
+/**
+ * Context for resolving CSS length strings to absolute numeric values.
+ *
+ * - rootFontSize: pixel size used for `rem` units (default: 16px).
+ * - baseFontSize: pixel size used for `em` units (falls back to rootFontSize).
+ */
+export interface CssUnitContext {
+    rootFontSize?: number;
+    baseFontSize?: number;
+}
+
+/**
  * Theme colors for SmilesDrawer rendering engine.
  * Each property represents a color for a specific atom or drawing element.
  *
@@ -39,26 +56,30 @@ export interface SmilesDrawerTheme {
  * See: https://github.com/reymond-group/smilesDrawer#options
  */
 export interface SmilesDrawerOptions {
+    /**
+     * All length-based properties accept either raw numbers (interpreted as SmilesDrawer base units)
+     * or CSS length strings (e.g. '2rem', '12px', '50%').
+     */
     /** Drawing width (default: 500px; for inline SMILES: 1em) */
-    width?: number;
+    width?: CssLengthValue;
     /** Drawing height (default: 500px; for inline SMILES: 1em) */
-    height?: number;
-    /** Bond thickness in pixels (default: 0.6) */
-    bondThickness?: number;
-    /** Bond length in pixels (default: 15) */
-    bondLength?: number;
+    height?: CssLengthValue;
+    /** Bond thickness (default: 0.6px) */
+    bondThickness?: CssLengthValue;
+    /** Bond length (default: 15px) */
+    bondLength?: CssLengthValue;
     /** Short bond length (e.g. double bonds) as a fraction of bond length (default: 0.85) */
     shortBondLength?: number;
-    /** Bond spacing (e.g. space between double bonds) in pixels (default: 0.18 * 15) */
-    bondSpacing?: number;
+    /** Bond spacing (e.g. space between double bonds) (default: 0.18 * 15px) */
+    bondSpacing?: CssLengthValue;
     /** Atom visualization style: 'default', 'balls', or 'none' (default: 'default') */
     atomVisualization?: 'default' | 'balls' | 'none';
-    /** Large font size (in pt) for element symbols (default: 6) */
-    fontSizeLarge?: number;
-    /** Small font size (in pt) for numbers (default: 4) */
-    fontSizeSmall?: number;
-    /** Padding around the drawing in pixels (default: 20.0) */
-    padding?: number;
+    /** Large font size (default: 6pt) for element symbols */
+    fontSizeLarge?: CssLengthValue;
+    /** Small font size (default: 4pt) for numbers */
+    fontSizeSmall?: CssLengthValue;
+    /** Padding around the drawing (default: 20px) */
+    padding?: CssLengthValue;
     /** Enable experimental features for complex ring systems (default: false) */
     experimental?: boolean;
     /** Show terminal carbons (e.g. CH3 groups) (default: false) */
@@ -147,6 +168,10 @@ export interface PluginOptions {
      * shared namespace so that the injected runtime script can reuse it.
      */
     loadSmilesDrawer?: () => Promise<SmilesDrawerLoaderResult> | SmilesDrawerLoaderResult;
+    /**
+     * Override defaults used when converting CSS length strings to numeric values.
+     */
+    cssUnitContext?: CssUnitContext;
 }
 
 /**

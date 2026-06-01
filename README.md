@@ -66,18 +66,18 @@ const md = new MarkdownIt().use(MarkdownItSmiles, {
   // Separate configuration for different contexts
   smilesDrawerOptions: {
     default: {
-      width: 400,
-      height: 300,
+      width: '25rem',
+      height: '18rem',
       theme: 'light'
     },
     inline: {
-      width: 100,
-      height: 100
+      width: '4em',
+      height: '4em'
     },
     block: {
-      width: 500,
-      height: 400,
-      bondThickness: 0.8
+      width: '28rem',
+      height: '22rem',
+      bondThickness: '0.8px'
     }
   },
   
@@ -210,7 +210,7 @@ The molecule $smiles{CCO} is ethanol, while $smiles{c1ccccc1} is benzene.
 #### Inline with Options
 
 ```markdown
-Large inline molecule: $smiles{CN1C=NC2=C1C(=O)N(C(=O)N2C)C}{width: 200, height: 150}
+Large inline molecule: $smiles{CN1C=NC2=C1C(=O)N(C(=O)N2C)C}{width: '6rem', height: '4.5rem'}
 ```
 
 ## Configuration Options
@@ -218,7 +218,7 @@ Large inline molecule: $smiles{CN1C=NC2=C1C(=O)N(C(=O)N2C)C}{width: 200, height:
 ### Plugin Options
 
 | Option | Type | Default | Description |
-|--------|------|---------|-------------|
+| ------ | ---- | ------- | ----------- |
 | `renderAtParse` | boolean | `false` | Render during parsing (Node.js only) |
 | `format` | string | `'svg'` | Output format: 'svg' or 'img' |
 | `fontUrl` | string | - | Custom font URL for rendering |
@@ -226,23 +226,24 @@ Large inline molecule: $smiles{CN1C=NC2=C1C(=O)N(C(=O)N2C)C}{width: 200, height:
 | `loadSmilesDrawer` | function | - | Custom loader returning a SmilesDrawer module |
 | `smilesDrawerOptions` | object | `{}` | SmilesDrawer configuration |
 | `errorHandling` | object | - | Error handling options (renderAtParse only) |
+| `cssUnitContext` | object | `{ rootFontSize: 16, baseFontSize: 16 }` | Base font sizes used to resolve `em` / `rem` units |
 
 ### SmilesDrawer Options
 
 These options can be specified in `smilesDrawerOptions.default`, `smilesDrawerOptions.block`, `smilesDrawerOptions.inline`, or in block/inline SMILES directly:
 
 | Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `width` | number | 500 | Canvas width in pixels |
-| `height` | number | 500 | Canvas height in pixels |
-| `bondThickness` | number | 0.6 | Thickness of chemical bonds |
-| `bondLength` | number | 15 | Length of chemical bonds |
-| `shortBondLength` | number | 0.85 | Short bond length ratio |
-| `bondSpacing` | number | 2.7 | Spacing between double bonds |
-| `atomVisualization` | string | `'default'` | 'default', 'balls', or 'none' |
-| `fontSizeLarge` | number | 6 | Large font size for elements |
-| `fontSizeSmall` | number | 4 | Small font size for numbers |
-| `padding` | number | 20.0 | Canvas padding |
+| ------ | ---- | ------- | ----------- |
+| `width` | `number` or CSS length string | 500 | Canvas width. Numbers use SmilesDrawer base units; strings accept CSS lengths (`px`, `rem`, `em`, `pt`). |
+| `height` | `number` or CSS length string | 500 | Canvas height. Same unit support as `width`. |
+| `bondThickness` | `number` or CSS length string | 0.6 | Thickness of chemical bonds. |
+| `bondLength` | `number` or CSS length string | 15 | Length of chemical bonds. |
+| `shortBondLength` | number | 0.85 | Short bond length ratio. |
+| `bondSpacing` | `number` or CSS length string | 2.7 | Spacing between double bonds. |
+| `atomVisualization` | string | `'default'` | 'default', 'balls', or 'none'. |
+| `fontSizeLarge` | `number` or CSS length string | 6 | Large font size for elements. |
+| `fontSizeSmall` | `number` or CSS length string | 4 | Small font size for numbers. |
+| `padding` | `number` or CSS length string | 20.0 | Canvas padding. |
 | `terminalCarbons` | boolean | false | Show terminal carbons (CH3) |
 | `explicitHydrogens` | boolean | false | Show explicit hydrogens |
 | `compactDrawing` | boolean | true | Use compact drawing mode |

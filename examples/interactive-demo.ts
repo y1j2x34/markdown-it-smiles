@@ -14,16 +14,16 @@ declare global {
 const md = MarkdownIt().use(MarkdownItSmiles, {
     smilesDrawerOptions: {
         default: {
-            bondThickness: 0.6,
-            bondLength: 15,
+            bondThickness: '0.6px',
+            bondLength: '15px',
             atomVisualization: 'default',
             isomeric: false,
             terminalCarbons: false,
             explicitHydrogens: false,
             compactDrawing: true,
-            fontSizeLarge: 5,
-            fontSizeSmall: 3,
-            padding: 20,
+            fontSizeLarge: '5pt',
+            fontSizeSmall: '3pt',
+            padding: '1.25rem',
         },
     },
 });
