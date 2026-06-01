@@ -14,11 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dark theme support improvements
 - Performance optimizations
 
+## [2.1.0] - 2026-06-01
+
+### Added
+
+- ✨ **Custom SmilesDrawer loader**: New `loadSmilesDrawer` option lets you supply a module loader that works in bundlers, SSR, or custom environments while sharing the resolved module between Node.js render-at-parse flows and the browser runtime bootstrapper.
+- 🧮 **CSS length unit support**: Dimension-related SmilesDrawer options now accept CSS lengths (`px`, `rem`, `em`, `pt`) and expose a `cssUnitContext` to control conversion baselines, preserving authored styles on the wrapper elements.
+
 ## [2.0.0] - 2025-06-20
 
 ### Added
 
-- 🚀 **Dual Rendering Strategy**: 
+- 🚀 **Dual Rendering Strategy**:
   - **Parse-time Rendering**: `renderAtParse=true` embeds rendered SMILES as images/SVG directly in HTML (Node.js only)
   - **Display-time Rendering**: `renderAtParse=false` injects smiles-drawer script for browser-side rendering (default)
 - 🖼️ **High-Quality Image Output**: Sharp.js integration for PNG generation (Node.js only)
@@ -46,12 +53,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Rendering Modes
 
 #### Browser Environment
+
 - Uses `dist/browser` build when running markdown-it in browser
 - Only supports **display-time rendering** (`renderAtParse` not supported)
 - Generated HTML includes smiles-drawer script injection
 - SMILES structures render when HTML is displayed in browser
 
 #### Node.js Environment
+
 - Uses `dist/node` build when running markdown-it in Node.js
 - Supports both rendering strategies:
   - **Parse-time rendering** (`renderAtParse=true`): Renders SMILES immediately during markdown parsing, embeds final images/SVG in HTML
