@@ -319,8 +319,11 @@ export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
         `.replace(/ {16}/g, '');
 
         const scriptTag = (() => {
-            if (isBrowser() || script) {
-                return script ? `<script src="${script}"></script>` : '';
+            if (isBrowser() && options.loadSmilesDrawer) {
+                return '';
+            }
+            if (script) {
+                return `<script src="${script}"></script>`;
             }
             return `<script>${scriptContent()}</script>`;
         })();
