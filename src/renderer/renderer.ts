@@ -1,14 +1,10 @@
 import type { Token } from 'markdown-it/index.js';
 import { extend } from '../utils/extends';
-import {
-    PluginContext,
-    PluginOptions,
-    SmilesDrawerOptions,
-    SmilesDrawerLoaderResult,
-} from '../plugin-options';
-import DefaultSmilesDrawer from 'smiles-drawer';
+import { PluginContext, PluginOptions, SmilesDrawerOptions } from '../plugin-options';
 import { isBrowser } from '../utils/isBrowser';
 import { normalizeSmilesDrawerOptions } from '../utils/cssUnits';
+import { renderSmilesAtParseNode } from './node/renderAtParse';
+import { renderSmilesAtParseBrowser } from './browser/renderAtParse';
 
 function generateRenderer(options: PluginOptions, context: PluginContext) {
     return function render(tokens: Token[], idx: number, smilesOptions: Partial<SmilesDrawerOptions>): string {
@@ -80,70 +76,30 @@ function generateRenderer(options: PluginOptions, context: PluginContext) {
         }
 
         if (isBrowser()) {
-            return html;
+            const attrMap = Object.entries(attrs).reduce<Record<string, string>>((acc, [key, value]) => {
+                acc[key] = value;
+                return acc;
+            }, {});
+
+            return renderSmilesAtParseBrowser({
+                smiles: data,
+                format,
+                attrs: attrMap,
+                options,
+                context,
+                smilesOptions,
+            });
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const JSDOM = require('jsdom').JSDOM as typeof import('jsdom').JSDOM;
-        const dom = new JSDOM(html);
-        const exportedGlobalVariables = {
-            window: dom.window,
-            document: dom.window.document,
-            HTMLImageElement: dom.window.HTMLImageElement,
-            SVGElement: dom.window.SVGElement,
-            Image: function () {
-                return dom.window.document.createElement('img');
-            },
-        };
-        Object.assign(globalThis, exportedGlobalVariables);
-        try {
-            let error: Error | undefined;
-            const smilesDrawer = resolveSmilesDrawer(options, context);
-            smilesDrawer.SmiDrawer.apply(undefined, undefined, undefined, undefined, null, (err: Error) => {
-                error = err;
-                options.errorHandling?.onError?.(err);
-            });
-            if (error) {
-                if (options.errorHandling?.fallbackImage) {
-                    return `<img src="${options.errorHandling.fallbackImage}" ${attrsStr}></img>`;
-                } else {
-                    return [
-                        '<div',
-                        ' class="smiles-error"',
-                        ` data-smiles-error="Invalid SMILES: \\"${data}\\""`,
-                        `>${error.message}</div>`,
-                    ].join('');
-                }
-            }
-            const element = dom.window.document.querySelector(tag);
-            if (!element || format !== 'img') {
-                return element?.outerHTML ?? '';
-            }
-            element.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-            const sharp = require('sharp') as typeof import('sharp');
-            const bufferPromise = sharp(Buffer.from(element.outerHTML)).png().toBuffer();
-
-            let buffer: Buffer | undefined;
-
-            bufferPromise.then(it => {
-                buffer = it;
-            });
-
-            const deasync = require('deasync');
-            while (!buffer) {
-                deasync.sleep(100);
-            }
-
-            const base64 = buffer.toString('base64');
-            return `<img src="data:image/png;base64,${base64}" ${attrsStr}></img>`;
-        } finally {
-            for (const key in exportedGlobalVariables) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                delete globalThis[key];
-            }
-        }
+        return renderSmilesAtParseNode({
+            html,
+            tag,
+            format,
+            attrs: attrsStr,
+            smiles: data,
+            options,
+            context,
+        });
     };
 }
 
@@ -159,73 +115,6 @@ function determineRenderTag(format: string, options: PluginOptions) {
             throw new Error(`Invalid format: ${format}, only 'svg' and 'img' are supported`);
     }
     return format;
-}
-
-function resolveSmilesDrawer(options: PluginOptions, context: PluginContext): SmilesDrawerLoaderResult {
-    if (context.smilesDrawerModule) {
-        return context.smilesDrawerModule;
-    }
-
-    const normalize = (module: unknown): SmilesDrawerLoaderResult => {
-        if (!module) {
-            throw new Error('Failed to resolve SmilesDrawer: loader returned an empty value');
-        }
-
-        const candidate = module as SmilesDrawerLoaderResult & { default?: unknown };
-
-        if (candidate.SmiDrawer) {
-            return candidate;
-        }
-
-        if (candidate.default) {
-            return normalize(candidate.default);
-        }
-
-        throw new Error('Failed to resolve SmilesDrawer: module does not expose SmiDrawer');
-    };
-
-    const assignModule = (module: SmilesDrawerLoaderResult) => {
-        context.smilesDrawerModule = module;
-        return module;
-    };
-
-    if (options.loadSmilesDrawer) {
-        const maybeModule = options.loadSmilesDrawer();
-
-        if (maybeModule && typeof (maybeModule as Promise<unknown>).then === 'function') {
-            if (isBrowser()) {
-                throw new Error('loadSmilesDrawer cannot return a Promise in browser render-at-parse mode');
-            }
-
-            let resolved: SmilesDrawerLoaderResult | undefined;
-            let rejection: unknown;
-
-            (maybeModule as Promise<SmilesDrawerLoaderResult>)
-                .then(module => {
-                    resolved = normalize(module);
-                })
-                .catch(error => {
-                    rejection = error;
-                });
-
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const deasync = require('deasync');
-
-            while (!resolved && !rejection) {
-                deasync.sleep(25);
-            }
-
-            if (rejection) {
-                throw rejection;
-            }
-
-            return assignModule(resolved!);
-        }
-
-        return assignModule(normalize(maybeModule));
-    }
-
-    return assignModule(normalize(DefaultSmilesDrawer));
 }
 
 function createRendererWrapper(

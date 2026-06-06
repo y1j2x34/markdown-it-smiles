@@ -118,6 +118,11 @@ export interface SmilesDrawerOptions {
  */
 export type SmilesDrawerLoaderResult = typeof import('smiles-drawer');
 
+export interface RuntimeAssets {
+    scripts: string[];
+    styles: string[];
+}
+
 export interface PluginOptions {
     /**
      * URL to a custom font to use for rendering.
@@ -169,6 +174,12 @@ export interface PluginOptions {
      */
     loadSmilesDrawer?: () => Promise<SmilesDrawerLoaderResult> | SmilesDrawerLoaderResult;
     /**
+     * Whether to automatically inject runtime scripts and styles into the rendered HTML.
+     * Disable this when you want to manage asset injection manually (e.g. SSR templates).
+     * @default true
+     */
+    injectRuntime?: boolean;
+    /**
      * Override defaults used when converting CSS length strings to numeric values.
      */
     cssUnitContext?: CssUnitContext;
@@ -182,4 +193,11 @@ export interface PluginContext {
     hasSmiles: boolean;
     /** Cached SmilesDrawer module for render-at-parse in Node environments */
     smilesDrawerModule?: SmilesDrawerLoaderResult;
+    /** Internal cache object for loader normalization */
+    smilesDrawerModuleCache?: {
+        module?: SmilesDrawerLoaderResult;
+        modulePromise?: Promise<SmilesDrawerLoaderResult>;
+    };
+    /** Cached runtime asset strings generated during the last render pass */
+    runtimeAssets?: RuntimeAssets;
 }

@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "rootDir": "./",
-        "baseUrl": ".",
         "target": "ESNext",
         "module": "ESNext",
         "lib": [
@@ -18,6 +17,7 @@
         "noFallthroughCasesInSwitch": true,
         "noUncheckedIndexedAccess": true,
         "paths": {
+            "*": ["./*"],
             "markdown-it-smiles": ["./src/index.ts"],
             "markdown-it-smiles/*": ["./src/*"],
             "markdown-it-smiles-runtime": ["./dist/browser/esm/index.js"]

@@ -1,6 +1,5 @@
-import fs from 'fs';
-import path from 'path';
 import { defineConfig } from 'tsup';
+import { readdir, rm } from 'node:fs/promises';
 
 export default defineConfig(options => {
     const baseConfig = {
@@ -58,10 +57,17 @@ export default defineConfig(options => {
             external: ['fs', 'path', 'canvas', 'sharp', 'jsdom', 'deasync'],
             noExternal: ['smiles-drawer'],
             onSuccess: async () => {
-                const files = fs.readdirSync('./dist/browser/iife');
-                const canvasFile = files.find(it => it.indexOf('canvas') > -1);
-                if (canvasFile) {
-                    fs.rmSync(path.resolve(__dirname, './dist/browser/iife/', canvasFile));
+                try {
+                    const iifeDir = new URL('./dist/browser/iife/', import.meta.url);
+                    const files = await readdir(iifeDir);
+                    const canvasFile = files.find(it => it.includes('canvas'));
+                    if (canvasFile) {
+                        await rm(new URL(canvasFile, iifeDir), { force: true });
+                    }
+                } catch (error) {
+                    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+                        throw error;
+                    }
                 }
             },
         },
