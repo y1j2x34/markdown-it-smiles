@@ -1,16 +1,19 @@
 {
-    "name": "markdown-it-smiles-ssr",
-    "version": "1.0.0",
-    "description": "Server-side rendering examples for markdown-it-smiles",
-    "main": "index.js",
-    "scripts": {
-        "dev": "vite dev --config vite.config.ts",
-        "build:ssr": "node ssr/generate.js"
-    },
-    "dependencies": {
-        "markdown-it": "^14.0.0",
-        "markdown-it-smiles": "link:../"
-    },
-    "author": "",
-    "license": "MIT"
+  "name": "markdown-it-smiles-examples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
+  }
 }

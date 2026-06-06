@@ -1,0 +1,65 @@
+[
+  {
+    "id": "basic-static",
+    "title": "Basic Static Diagram",
+    "description": "Render simple molecules as part of static site generation output.",
+    "markdown": "# Static Molecules\n\nWater inline: $smiles{O}\n\n```smiles\nCCO\n```",
+    "options": {
+      "renderAtParse": true,
+      "smilesDrawerOptions": {
+        "default": {
+          "width": 320,
+          "height": 240
+        }
+      }
+    },
+    "errors": []
+  },
+  {
+    "id": "custom-theme",
+    "title": "Custom Dark Theme",
+    "description": "Use custom palette for aromatic rings when rendering during build.",
+    "markdown": "# Custom Theming\n\n```smiles { width: 400, height: 280, theme: 'dark' }\nc1ccccc1\n```",
+    "options": {
+      "renderAtParse": true,
+      "smilesDrawerOptions": {
+        "default": {
+          "themes": {
+            "midnight": {
+              "C": "#E0F2F1",
+              "O": "#FF8A80",
+              "N": "#64FFDA",
+              "H": "#FFFFFF",
+              "BACKGROUND": "#001F1F",
+              "S": "#FFD180",
+              "P": "#FAD02E",
+              "F": "#80CBC4",
+              "CL": "#4DB6AC",
+              "BR": "#FF7043",
+              "I": "#CE93D8",
+              "B": "#FFE57F",
+              "SI": "#B0BEC5"
+            }
+          },
+          "theme": "midnight",
+          "width": 360,
+          "height": 260
+        }
+      }
+    },
+    "errors": []
+  },
+  {
+    "id": "error-handling",
+    "title": "Graceful Error Capture",
+    "description": "Demonstrate build-time error fallback with custom handler.",
+    "markdown": "# Invalid Molecule\n\n```smiles\nTHIS_IS_NOT_VALID\n```",
+    "options": {
+      "renderAtParse": true,
+      "errorHandling": {
+        "fallbackImage": "https://dummyimage.com/240x160/FFEAEA/FF2157&text=Invalid+SMILES"
+      }
+    },
+    "errors": []
+  }
+]

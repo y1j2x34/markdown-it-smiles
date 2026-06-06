@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "moduleResolution": "bundler",
+    "module": "esnext",
+    "target": "es2021",
+    "isolatedModules": true,
+    "paths": {
+      "*": ["./*"],
+      "markdown-it-smiles": ["../dist/node/index.d.ts", "../dist/browser/esm/index.js"],
+      "markdown-it-smiles/plugin-options": ["../dist/node/index.d.ts"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["dist"]
+}
