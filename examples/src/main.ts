@@ -41,9 +41,6 @@ declare global {
 
 type PluginOptions = Parameters<typeof MarkdownItSmiles>[1];
 type BasePluginOptions = Exclude<PluginOptions, undefined> extends object ? Exclude<PluginOptions, undefined> : Record<string, unknown>;
-type ExtendedPluginOptions = BasePluginOptions & {
-  injectRuntime?: boolean;
-};
 
 interface NodeScenario {
   id: string;
@@ -65,7 +62,7 @@ const nodeScenarios: NodeScenario[] = (nodeScenariosData as NodeScenarioSample[]
 
 const markdownItCache = new Map<string, MarkdownIt>();
 
-function stringifyOptions(options?: ExtendedPluginOptions): string {
+function stringifyOptions(options?: BasePluginOptions): string {
   if (!options) return 'default';
   try {
     return JSON.stringify(options);
@@ -75,18 +72,15 @@ function stringifyOptions(options?: ExtendedPluginOptions): string {
   }
 }
 
-function getMarkdownIt(options?: ExtendedPluginOptions): MarkdownIt {
+function getMarkdownIt(options?: BasePluginOptions): MarkdownIt {
   const cacheKey = stringifyOptions(options);
   const cached = markdownItCache.get(cacheKey);
   if (cached) {
     return cached;
   }
   const md = new MarkdownIt({ html: true, breaks: true }).use(
-    MarkdownItSmiles as unknown as (md: MarkdownIt, options?: ExtendedPluginOptions) => void,
-    {
-      injectRuntime: false,
-      ...(options ?? {}),
-    },
+    MarkdownItSmiles as unknown as (md: MarkdownIt, options?: BasePluginOptions) => void,
+    options ?? {},
   );
   markdownItCache.set(cacheKey, md);
   return md;
@@ -211,18 +205,16 @@ function renderBrowserSection(section: HTMLElement) {
     inlineDefaults.width = finalInlineWidth;
     inlineDefaults.height = finalInlineHeight;
 
-    const blockPluginOptions: ExtendedPluginOptions = {
+    const blockPluginOptions: BasePluginOptions = {
       smilesDrawerOptions: {
         default: blockDefaults,
       },
-      injectRuntime: false,
     };
 
-    const inlinePluginOptions: ExtendedPluginOptions = {
+    const inlinePluginOptions: BasePluginOptions = {
       smilesDrawerOptions: {
         default: inlineDefaults,
       },
-      injectRuntime: false,
     };
 
     const inlineMarkdown = `Inline SMILES example: $smiles{${sample.smiles}} embedded directly in a sentence.`;
@@ -452,10 +444,9 @@ function renderPlayground(section: HTMLElement) {
 
   syncDocumentTheme();
 
-  function computeOptions(): ExtendedPluginOptions {
-    const result: ExtendedPluginOptions = {
+  function computeOptions(): BasePluginOptions {
+    const result: BasePluginOptions = {
       format: state.format,
-      injectRuntime: false,
       smilesDrawerOptions: {
         default: {
           theme: state.theme === 'midnight' ? 'midnight' : state.theme,

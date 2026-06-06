@@ -106,7 +106,6 @@ function markdownItSmilesNodeExamplesPlugin(): Plugin {
         const pluginOptions: ScenarioOptions = {
           ...rawOptions,
           renderAtParse: true,
-          injectRuntime: false,
           errorHandling: {
             ...baseErrorHandling,
             onError: (err: Error) => {

@@ -174,12 +174,6 @@ export interface PluginOptions {
      */
     loadSmilesDrawer?: () => Promise<SmilesDrawerLoaderResult> | SmilesDrawerLoaderResult;
     /**
-     * Whether to automatically inject runtime scripts and styles into the rendered HTML.
-     * Disable this when you want to manage asset injection manually (e.g. SSR templates).
-     * @default true
-     */
-    injectRuntime?: boolean;
-    /**
      * Override defaults used when converting CSS length strings to numeric values.
      */
     cssUnitContext?: CssUnitContext;
