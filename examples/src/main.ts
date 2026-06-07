@@ -122,37 +122,9 @@ function renderBrowserSection(section: HTMLElement) {
   grid.className = 'molecule-grid';
   section.appendChild(grid);
 
-  moleculeCatalog.forEach((sample) => {
-    const card = document.createElement('article');
-    card.className = 'molecule-card';
-    card.dataset.source = sample.origin;
+  type Sample = (typeof moleculeCatalog)[number];
 
-    const title = document.createElement('h3');
-    title.textContent = sample.name;
-    card.appendChild(title);
-
-    const description = document.createElement('p');
-    description.textContent = sample.description;
-    card.appendChild(description);
-
-    const rendered = document.createElement('div');
-    rendered.className = 'browser-preview';
-    rendered.innerHTML = `
-      <div class="preview-grid">
-        <div class="preview-meta">
-          <strong>Inline</strong>
-          <div class="rendered inline"></div>
-        </div>
-        <div class="preview-meta">
-          <strong>Block</strong>
-          <div class="rendered block"></div>
-        </div>
-      </div>
-    `;
-
-    const inlineContainer = rendered.querySelector('.rendered.inline') as HTMLElement;
-    const blockContainer = rendered.querySelector('.rendered.block') as HTMLElement;
-
+  const buildRenderOutputs = (sample: Sample, renderAtParse: boolean) => {
     const blockDefaults = { ...(sample.options ?? {}) } as Record<string, unknown>;
     const inlineDefaults = { ...(sample.options ?? {}) } as Record<string, unknown>;
 
@@ -205,17 +177,12 @@ function renderBrowserSection(section: HTMLElement) {
     inlineDefaults.width = finalInlineWidth;
     inlineDefaults.height = finalInlineHeight;
 
-    const blockPluginOptions: BasePluginOptions = {
+    const pluginOptions = (defaults: Record<string, unknown>): BasePluginOptions => ({
+      renderAtParse,
       smilesDrawerOptions: {
-        default: blockDefaults,
+        default: { ...defaults },
       },
-    };
-
-    const inlinePluginOptions: BasePluginOptions = {
-      smilesDrawerOptions: {
-        default: inlineDefaults,
-      },
-    };
+    });
 
     const inlineMarkdown = `Inline SMILES example: $smiles{${sample.smiles}} embedded directly in a sentence.`;
     let blockMarkdown: string;
@@ -228,10 +195,50 @@ function renderBrowserSection(section: HTMLElement) {
         : `\`\`\`smiles\n${sample.smiles}\n\`\`\``;
     }
 
-    const inlineMd = getMarkdownIt(inlinePluginOptions);
-    const blockMd = getMarkdownIt(blockPluginOptions);
-    inlineContainer.innerHTML = inlineMd.render(inlineMarkdown);
-    blockContainer.innerHTML = blockMd.render(blockMarkdown);
+    const inlineMd = getMarkdownIt(pluginOptions(inlineDefaults));
+    const blockMd = getMarkdownIt(pluginOptions(blockDefaults));
+
+    return {
+      inlineHtml: inlineMd.render(inlineMarkdown),
+      blockHtml: blockMd.render(blockMarkdown),
+    };
+  };
+
+  moleculeCatalog.forEach((sample) => {
+    const card = document.createElement('article');
+    card.className = 'molecule-card';
+    card.dataset.source = sample.origin;
+
+    const title = document.createElement('h3');
+    title.textContent = sample.name;
+    card.appendChild(title);
+
+    const description = document.createElement('p');
+    description.textContent = sample.description;
+    card.appendChild(description);
+
+    const rendered = document.createElement('div');
+    rendered.className = 'browser-preview';
+    rendered.innerHTML = `
+      <div class="preview-grid">
+        <div class="preview-meta">
+          <strong>Inline preview</strong>
+          <div class="rendered inline"></div>
+        </div>
+        <div class="preview-meta">
+          <strong>Block preview</strong>
+          <div class="rendered block"></div>
+        </div>
+      </div>
+    `;
+
+    const inlineContainer = rendered.querySelector('.rendered.inline') as HTMLElement;
+    const blockContainer = rendered.querySelector('.rendered.block') as HTMLElement;
+
+    const { inlineHtml, blockHtml } = buildRenderOutputs(sample, false);
+
+    inlineContainer.innerHTML = inlineHtml;
+    blockContainer.innerHTML = blockHtml;
 
     const codeBlock = document.createElement('pre');
     codeBlock.textContent = sample.smiles;
@@ -246,6 +253,59 @@ function renderBrowserSection(section: HTMLElement) {
     grid.appendChild(card);
     queueSmilesDraw();
   });
+
+  const comparisonSample = moleculeCatalog[0];
+  if (comparisonSample) {
+    const comparisonCard = document.createElement('article');
+    comparisonCard.className = 'molecule-card comparison-card';
+
+    const comparisonHeader = document.createElement('h3');
+    comparisonHeader.textContent = 'Render-at-parse vs Hydrated output';
+    comparisonCard.appendChild(comparisonHeader);
+
+    const comparisonCopy = document.createElement('p');
+    comparisonCopy.textContent = 'Compare the immediate SVG produced during parsing with the deferred browser render for the same molecule.';
+    comparisonCard.appendChild(comparisonCopy);
+
+    const preview = document.createElement('div');
+    preview.className = 'browser-preview';
+    preview.innerHTML = `
+      <div class="preview-grid">
+        <div class="preview-meta">
+          <strong>renderAtParse: true</strong>
+          <div class="rendered inline parse-true"></div>
+          <div class="rendered block parse-true"></div>
+        </div>
+        <div class="preview-meta">
+          <strong>renderAtParse: false</strong>
+          <div class="rendered inline parse-false"></div>
+          <div class="rendered block parse-false"></div>
+        </div>
+      </div>
+    `;
+
+    const inlineParse = preview.querySelector('.rendered.inline.parse-true') as HTMLElement;
+    const blockParse = preview.querySelector('.rendered.block.parse-true') as HTMLElement;
+    const inlineHydrated = preview.querySelector('.rendered.inline.parse-false') as HTMLElement;
+    const blockHydrated = preview.querySelector('.rendered.block.parse-false') as HTMLElement;
+
+    const parseOutputs = buildRenderOutputs(comparisonSample, true);
+    const hydratedOutputs = buildRenderOutputs(comparisonSample, false);
+
+    inlineParse.innerHTML = parseOutputs.inlineHtml;
+    blockParse.innerHTML = parseOutputs.blockHtml;
+    inlineHydrated.innerHTML = hydratedOutputs.inlineHtml;
+    blockHydrated.innerHTML = hydratedOutputs.blockHtml;
+
+    comparisonCard.appendChild(preview);
+
+    const exampleCode = document.createElement('pre');
+    exampleCode.textContent = `renderAtParse: true | false\nSMILES: ${comparisonSample.smiles}`;
+    comparisonCard.appendChild(exampleCode);
+
+    grid.appendChild(comparisonCard);
+    queueSmilesDraw();
+  }
 }
 
 function createJsonPanel(label: string, data: unknown): HTMLElement {

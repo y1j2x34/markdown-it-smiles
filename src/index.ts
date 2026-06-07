@@ -417,13 +417,6 @@ function createRuntimeBootstrap(): string {
  * @param options - Plugin options for customizing rendering and behavior.
  */
 export function MarkdownItSmiles(md: MarkdownIt, options: PluginOptions = {}) {
-    // Warn and disable renderAtParse in browser environments
-    if (options.renderAtParse) {
-        if (typeof document !== 'undefined') {
-            console.warn('renderAtParse is not supported in browser environment, it will be ignored');
-            options.renderAtParse = false;
-        }
-    }
 
     // Register block and inline rules for SMILES
     md.block.ruler.before('fence', 'smiles_block', smilesBlock, {

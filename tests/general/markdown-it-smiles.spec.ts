@@ -110,15 +110,12 @@ CC(=O)O
 
     describe('Environment Compatibility', () => {
         if (IS_BROWSER) {
-            it('should warn about renderAtParse in browser environment', () => {
-                const consoleSpy = vi.spyOn(console, 'warn');
-
+            it('should render SMILES at parse time in browser environment', () => {
                 md.use(MarkdownItSmiles, { renderAtParse: true });
-                expect(consoleSpy).toHaveBeenCalledWith(
-                    'renderAtParse is not supported in browser environment, it will be ignored'
-                );
+                const result = md.render('$smiles{CCO}');
 
-                consoleSpy.mockRestore();
+                expect(result).toContain('<svg');
+                expect(result).toContain('data-smiles-rendered="true"');
             });
         }
 

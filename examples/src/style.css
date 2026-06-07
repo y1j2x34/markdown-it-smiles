@@ -294,6 +294,7 @@ body[data-playground-theme='midnight'] .browser-preview {
 .browser-preview .preview-grid {
     display: grid;
     gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .browser-preview .preview-meta {

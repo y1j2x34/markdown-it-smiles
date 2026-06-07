@@ -137,8 +137,8 @@ export interface PluginOptions {
      */
     smilesDrawerScript?: string;
     /**
-     * If true, the smiles will be rendered at parse time.
-     * This is useful for markdown-it-container, but it will work only in node environment.
+     * If true, the smiles will be rendered at parse time in both Node.js and browser environments.
+     * Useful when SSR output or markdown-it-container needs pre-rendered markup.
      */
     renderAtParse?: boolean;
     /**
