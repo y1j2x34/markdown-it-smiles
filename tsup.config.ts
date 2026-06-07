@@ -1,7 +1,7 @@
-import { defineConfig } from 'tsup';
+import type { Options } from 'tsup';
 import { readdir, rm } from 'node:fs/promises';
 
-export default defineConfig(options => {
+export default (options: Options): Options[] => {
     const baseConfig = {
         minify: true,
         entry: ['src/index.ts'],
@@ -72,4 +72,4 @@ export default defineConfig(options => {
             },
         },
     ];
-});
+};
