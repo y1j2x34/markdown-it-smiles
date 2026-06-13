@@ -89,7 +89,7 @@ export function renderSmilesAtParseBrowser({
     smilesOptions,
 }: BrowserRenderInput): string {
     const module = resolveSmilesDrawerSync(options, context, DefaultSmilesDrawer);
-    const SmilesDrawerCtor = module.SmilesDrawer as unknown as
+    const SmilesDrawerCtor = module.SmiDrawer as unknown as
         | (new (molecule?: Record<string, unknown>, reaction?: Record<string, unknown>) => {
               draw: (
                   smilesText: string,
